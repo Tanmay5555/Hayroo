@@ -1,8 +1,9 @@
-import  { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
   MapPin, 
   Search, 
   ShoppingCart, 
+  Heart,
   Menu, 
   X, 
   ChevronDown, 
@@ -11,9 +12,23 @@ import {
   Monitor 
 } from 'lucide-react';
 
-export default function Navbar() {
+export default function Navbar({
+  onHomeClick,
+  onSearch,
+  searchQuery = '',
+  cartCount = 0,
+  wishlistCount = 0,
+  onOpenModal,
+  onOpenCart,
+  onOpenWishlist,
+}) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isThemeOpen, setIsThemeOpen] = useState(false);
+  const [searchInput, setSearchInput] = useState(searchQuery);
+
+  useEffect(() => {
+    setSearchInput(searchQuery);
+  }, [searchQuery]);
   
   // Theme state: 'light', 'dark', or 'system'
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'system');
@@ -25,7 +40,6 @@ export default function Navbar() {
     const systemQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
     const applyTheme = () => {
-      // eslint-disable-next-line no-useless-assignment
       let isDark = false;
       if (theme === 'dark') isDark = true;
       else if (theme === 'light') isDark = false;
@@ -59,6 +73,11 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (onSearch) onSearch(searchInput);
+  };
+
   const themeOptions = [
     { id: 'light', label: 'Light', icon: Sun },
     { id: 'dark', label: 'Dark', icon: Moon },
@@ -74,14 +93,22 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16 gap-2 md:gap-6">
           
           {/* Logo */}
-          <div className="shrink-0 cursor-pointer flex items-center">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-orange-400 tracking-wide hover:text-orange-300 transition-colors">
+          <div 
+            onClick={onHomeClick} 
+            className="shrink-0 cursor-pointer flex items-center group"
+            title="Go to Home"
+          >
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-orange-400 tracking-wide group-hover:text-orange-300 transition-colors">
               Hayroo
             </h1>
           </div>
 
           {/* Location */}
-          <div className="hidden lg:flex items-center gap-1.5 p-2 rounded-md hover:ring-1 hover:ring-white cursor-pointer transition-all">
+          <div 
+            onClick={() => onOpenModal && onOpenModal('shipping')}
+            className="hidden lg:flex items-center gap-1.5 p-2 rounded-md hover:ring-1 hover:ring-white cursor-pointer transition-all"
+            title="Change Delivery Location"
+          >
             <MapPin className="w-5 h-5 text-orange-400 shrink-0" />
             <div>
               <p className="text-[10px] text-gray-400 uppercase tracking-wider font-medium leading-none">
@@ -95,9 +122,11 @@ export default function Navbar() {
 
           {/* Search Box */}
           <div className="flex-1 max-w-2xl mx-2">
-            <form onSubmit={(e) => e.preventDefault()} className="flex items-center w-full">
+            <form onSubmit={handleSearchSubmit} className="flex items-center w-full">
               <input
                 type="text"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Search products..."
                 aria-label="Search products"
                 className="w-full px-4 py-2 text-sm text-slate-900 bg-white rounded-l-md outline-none focus:ring-2 focus:ring-orange-400"
@@ -105,7 +134,7 @@ export default function Navbar() {
               <button
                 type="submit"
                 aria-label="Search"
-                className="bg-orange-400 hover:bg-orange-500 text-slate-900 p-2.5 rounded-r-md transition-colors flex items-center justify-center font-bold"
+                className="bg-orange-400 hover:bg-orange-500 text-slate-900 p-2.5 rounded-r-md transition-colors flex items-center justify-center font-bold cursor-pointer"
               >
                 <Search className="w-5 h-5" />
               </button>
@@ -115,7 +144,7 @@ export default function Navbar() {
           {/* Right Navigation Actions */}
           <div className="hidden md:flex items-center gap-1 lg:gap-3">
             
-            {/* --- Theme Switcher Dropdown --- */}
+            {/* Theme Switcher Dropdown */}
             <div className="relative" ref={themeRef}>
               <button
                 onClick={() => setIsThemeOpen(!isThemeOpen)}
@@ -139,7 +168,7 @@ export default function Navbar() {
                           setTheme(option.id);
                           setIsThemeOpen(false);
                         }}
-                        className={`w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold transition-colors ${
+                        className={`w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold transition-colors cursor-pointer ${
                           isActive
                             ? 'text-orange-400 bg-slate-800'
                             : 'text-gray-300 hover:bg-slate-800 hover:text-white'
@@ -167,7 +196,11 @@ export default function Navbar() {
             </div>
 
             {/* Account & Lists */}
-            <div className="p-2 rounded-md hover:ring-1 hover:ring-white cursor-pointer transition-all">
+            <div 
+              onClick={() => onOpenModal && onOpenModal('signin')}
+              className="p-2 rounded-md hover:ring-1 hover:ring-white cursor-pointer transition-all"
+              title="Sign In / Account"
+            >
               <p className="text-[11px] text-gray-300 leading-none">Hello, Sign In</p>
               <div className="flex items-center gap-0.5">
                 <h4 className="text-sm font-semibold leading-tight">Account & Lists</h4>
@@ -175,13 +208,35 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* Cart with Badge */}
-            <div className="relative p-2 rounded-md hover:ring-1 hover:ring-white cursor-pointer flex items-center gap-2 transition-all">
+            {/* Wishlist Button with Badge */}
+            <div 
+              onClick={onOpenWishlist}
+              className="relative p-2 rounded-md hover:ring-1 hover:ring-white cursor-pointer flex items-center gap-1 transition-all"
+              title="View Wishlist"
+            >
+              <div className="relative">
+                <Heart className="w-6 h-6 text-rose-400" />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1.5 -right-2 bg-rose-500 text-white font-bold text-[10px] rounded-full h-4 w-4 flex items-center justify-center animate-pulse">
+                    {wishlistCount}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Cart Button with Badge */}
+            <div 
+              onClick={onOpenCart}
+              className="relative p-2 rounded-md hover:ring-1 hover:ring-white cursor-pointer flex items-center gap-2 transition-all"
+              title="View Cart"
+            >
               <div className="relative">
                 <ShoppingCart className="w-7 h-7 text-white" />
-                <span className="absolute -top-1.5 -right-2 bg-orange-500 text-slate-900 font-bold text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  3
-                </span>
+                {cartCount > 0 && (
+                  <span className="absolute -top-1.5 -right-2 bg-orange-500 text-slate-950 font-bold text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
               </div>
               <h4 className="text-sm font-semibold self-end hidden lg:block">Cart</h4>
             </div>
@@ -192,7 +247,7 @@ export default function Navbar() {
           <div className="flex md:hidden items-center gap-2">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 rounded-md text-gray-300 hover:text-white hover:bg-slate-800 focus:outline-none"
+              className="p-2 rounded-md text-gray-300 hover:text-white hover:bg-slate-800 focus:outline-none cursor-pointer"
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -205,7 +260,10 @@ export default function Navbar() {
       {isMobileMenuOpen && (
         <div className="md:hidden border-t border-slate-800 bg-slate-900 px-4 pt-3 pb-6 space-y-4">
           <div className="flex items-center justify-between text-sm text-gray-300 border-b border-slate-800 pb-3">
-            <div className="flex items-center gap-2">
+            <div 
+              onClick={() => onOpenModal && onOpenModal('shipping')}
+              className="flex items-center gap-2 cursor-pointer"
+            >
               <MapPin className="w-4 h-4 text-orange-400" />
               <span>Deliver to <strong>Ghaziabad 201001</strong></span>
             </div>
@@ -218,7 +276,7 @@ export default function Navbar() {
                   <button
                     key={option.id}
                     onClick={() => setTheme(option.id)}
-                    className={`p-1.5 rounded-md ${
+                    className={`p-1.5 rounded-md cursor-pointer ${
                       theme === option.id ? 'bg-orange-400 text-slate-950' : 'text-gray-400'
                     }`}
                   >
@@ -229,14 +287,27 @@ export default function Navbar() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 text-sm font-medium">
-            <div className="p-2 bg-slate-800 rounded-md text-center">
-              <p className="text-xs text-gray-400">Hello, Sign In</p>
-              <p className="font-semibold text-white">Account & Lists</p>
+          <div className="grid grid-cols-3 gap-2 text-xs font-medium">
+            <div 
+              onClick={() => onOpenModal && onOpenModal('signin')}
+              className="p-2 bg-slate-800 rounded-md text-center cursor-pointer hover:bg-slate-700"
+            >
+              <p className="text-[10px] text-gray-400">Account</p>
+              <p className="font-semibold text-white">Sign In</p>
             </div>
-            <div className="p-2 bg-slate-800 rounded-md text-center">
-              <p className="text-xs text-gray-400">Returns</p>
-              <p className="font-semibold text-white">& Orders</p>
+            <div 
+              onClick={onOpenWishlist}
+              className="p-2 bg-slate-800 rounded-md text-center cursor-pointer hover:bg-slate-700"
+            >
+              <p className="text-[10px] text-gray-400">Wishlist</p>
+              <p className="font-semibold text-rose-400">♥ ({wishlistCount})</p>
+            </div>
+            <div 
+              onClick={onOpenCart}
+              className="p-2 bg-slate-800 rounded-md text-center cursor-pointer hover:bg-slate-700"
+            >
+              <p className="text-[10px] text-gray-400">Cart</p>
+              <p className="font-semibold text-orange-400">🛒 ({cartCount})</p>
             </div>
           </div>
         </div>

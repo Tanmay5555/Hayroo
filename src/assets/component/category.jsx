@@ -1,4 +1,3 @@
-
 import { 
   Server, 
   ShoppingBag, 
@@ -16,11 +15,13 @@ import {
   ClipboardList, 
   Eye, 
   Smartphone, 
-  ArrowRight 
+  ArrowRight,
+  LayoutGrid
 } from 'lucide-react';
 
-export default function TopCategoriesGrid() {
+export default function TopCategoriesGrid({ activeCategory, onSelectCategory }) {
   const categories = [
+    { name: 'All', icon: LayoutGrid }, // Added "All" to reset filters
     { name: 'Computers', icon: Server },
     { name: 'Fashion', icon: ShoppingBag },
     { name: 'Electronics', icon: CreditCard },
@@ -40,43 +41,53 @@ export default function TopCategoriesGrid() {
   ];
 
   return (
-    <section className="bg-[#0b1120] text-white py-12 px-4 sm:px-6 lg:px-12 font-sans">
+    <section id="categories-section" className="bg-[#0b1120] text-white py-12 px-4 sm:px-6 lg:px-12 font-sans">
       <div className="max-w-7xl mx-auto">
         
         {/* Header Section */}
         <div className="flex items-center justify-between border-b border-slate-800/80 pb-6 mb-10">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-             Categories
+            Categories
           </h2>
-          <a
-            href="#"
-            className="inline-flex items-center gap-2 bg-[#1e293b]/60 hover:bg-[#1e293b] text-gray-300 hover:text-white border border-slate-700/60 text-sm font-medium px-4 py-2 rounded-lg transition-all"
+          <button
+            type="button"
+            onClick={() => onSelectCategory && onSelectCategory('All')}
+            className="inline-flex items-center gap-2 bg-[#1e293b]/60 hover:bg-[#1e293b] text-gray-300 hover:text-white border border-slate-700/60 text-sm font-medium px-4 py-2 rounded-lg transition-all cursor-pointer"
           >
-            <span>View more categories</span>
+            <span>View all categories</span>
             <ArrowRight className="w-4 h-4 text-gray-400" />
-          </a>
+          </button>
         </div>
 
         {/* 8-Column Responsive Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-y-10 gap-x-4">
           {categories.map((category, index) => {
             const Icon = category.icon;
+            const isActive = activeCategory === category.name;
+
             return (
-              <a
+              <button
                 key={index}
-                href="#"
-                className="flex flex-col items-center group cursor-pointer"
+                type="button"
+                onClick={() => onSelectCategory && onSelectCategory(category.name)} // Triggers filter in App.jsx
+                className="flex flex-col items-center group cursor-pointer border-none bg-transparent outline-none"
               >
-                {/* Circular Icon Wrapper */}
-                <div className="w-20 h-20 rounded-full bg-[#1e293b]/80 border border-slate-800 flex items-center justify-center mb-3 group-hover:bg-[#334155]/70 group-hover:scale-105 transition-all duration-200 shadow-md">
-                  <Icon className="w-8 h-8 text-slate-300 group-hover:text-white transition-colors" />
+                {/* Circular Icon Wrapper with Active Ring */}
+                <div 
+                  className={`w-20 h-20 rounded-full flex items-center justify-center mb-3 transition-all duration-200 shadow-md ${
+                    isActive 
+                      ? 'bg-blue-600 ring-4 ring-blue-500/40 scale-105 border-blue-400' 
+                      : 'bg-[#1e293b]/80 border border-slate-800 group-hover:bg-[#334155]/70 group-hover:scale-105'
+                  }`}
+                >
+                  <Icon className={`w-8 h-8 transition-colors ${isActive ? 'text-white' : 'text-slate-300 group-hover:text-white'}`} />
                 </div>
                 
                 {/* Category Label */}
-                <span className="text-sm font-bold text-gray-200 text-center leading-tight group-hover:text-white transition-colors">
+                <span className={`text-sm font-bold text-center leading-tight transition-colors ${isActive ? 'text-blue-400 font-extrabold' : 'text-gray-200 group-hover:text-white'}`}>
                   {category.name}
                 </span>
-              </a>
+              </button>
             );
           })}
         </div>

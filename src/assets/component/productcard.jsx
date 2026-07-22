@@ -1,8 +1,5 @@
-
-
-import { Eye, Heart, Star, ShoppingCart, Truck} from 'lucide-react';
-import Button from './Button';
-
+import { Eye, Heart, Star, ShoppingCart, Truck } from 'lucide-react';
+import Button from './button';
 
 export default function ProductCard({
   imageLight,
@@ -13,16 +10,23 @@ export default function ProductCard({
   reviewsCount = 0,
   price,
   features = [],
+  isFavorite = false,
   onAddToCart,
   onQuickLook,
   onFavorite,
+  onSelect,
 }) {
+  const handleSelect = (e) => {
+    if (e) e.preventDefault();
+    if (onSelect) onSelect();
+  };
+
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 flex flex-col justify-between mt-2 ml-2">
+    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 flex flex-col justify-between mt-2 ml-2 transition-all hover:shadow-md">
       <div>
         {/* Product Image */}
-        <div className="h-56 w-full flex items-center justify-center">
-          <a href="#" className="h-full">
+        <div className="h-56 w-full flex items-center justify-center cursor-pointer" onClick={handleSelect}>
+          <a href="#" onClick={handleSelect} className="h-full">
             <img className="mx-auto h-full dark:hidden object-contain" src={imageLight} alt={title} />
             <img className="mx-auto hidden h-full dark:block object-contain" src={imageDark || imageLight} alt={title} />
           </a>
@@ -38,23 +42,35 @@ export default function ProductCard({
             ) : <div />}
 
             <div className="flex items-center justify-end gap-1">
-              <Button
-                variant="iconOnly"
-                icon={Eye}
-                onClick={onQuickLook}
+              <button
+                type="button"
+                onClick={onQuickLook || handleSelect}
+                className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white transition-colors cursor-pointer"
                 title="Quick look"
-              />
-              <Button
-                variant="iconOnly"
-                icon={Heart}
+              >
+                <Eye className="w-5 h-5" />
+              </button>
+              <button
+                type="button"
                 onClick={onFavorite}
-                title="Add to Favorites"
-              />
+                className={`p-2 rounded-lg transition-all cursor-pointer ${
+                  isFavorite
+                    ? 'text-rose-500 bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100'
+                    : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
+                }`}
+                title={isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+              >
+                <Heart className={`w-5 h-5 ${isFavorite ? 'fill-rose-500 animate-bounce' : ''}`} />
+              </button>
             </div>
           </div>
 
           {/* Title */}
-          <a href="#" className="text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white line-clamp-2">
+          <a
+            href="#"
+            onClick={handleSelect}
+            className="text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white line-clamp-2 cursor-pointer"
+          >
             {title}
           </a>
 
@@ -93,7 +109,10 @@ export default function ProductCard({
         <Button
           variant="primary"
           icon={ShoppingCart}
-          onClick={onAddToCart}
+          onClick={(e) => {
+            if (e) e.stopPropagation();
+            if (onAddToCart) onAddToCart();
+          }}
         >
           Add to cart
         </Button>

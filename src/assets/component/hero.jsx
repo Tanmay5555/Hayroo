@@ -1,5 +1,3 @@
-
-
 import { 
   Monitor, 
   Gamepad2, 
@@ -11,8 +9,27 @@ import {
   ArrowRight 
 } from 'lucide-react';
 
-export default function HeroSection() {
-  
+export default function HeroSection({ onSelectCategory }) {
+  const handleCategoryClick = (categoryName) => {
+    if (onSelectCategory) {
+      onSelectCategory(categoryName);
+    }
+  };
+
+  const scrollToProducts = () => {
+    if (onSelectCategory) onSelectCategory('All');
+    const el = document.getElementById('featured-products');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const scrollToCategories = () => {
+    const el = document.getElementById('categories-section');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <section className="bg-[#0b1120] text-white py-12 px-4 sm:px-6 lg:px-12 font-sans">
@@ -32,10 +49,16 @@ export default function HeroSection() {
 
             {/* CTA Buttons */}
             <div className="flex items-center gap-4 pt-2">
-              <button className="bg-[#2563eb] hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg text-sm transition-colors shadow-sm">
+              <button 
+                onClick={scrollToProducts}
+                className="bg-[#2563eb] hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg text-sm transition-colors shadow-sm cursor-pointer"
+              >
                 Shop Now
               </button>
-              <button className="bg-transparent hover:bg-slate-800/60 text-gray-300 hover:text-white font-medium px-5 py-3 rounded-lg border border-slate-700/80 text-sm transition-all flex items-center gap-2">
+              <button 
+                onClick={scrollToCategories}
+                className="bg-transparent hover:bg-slate-800/60 text-gray-300 hover:text-white font-medium px-5 py-3 rounded-lg border border-slate-700/80 text-sm transition-all flex items-center gap-2 cursor-pointer"
+              >
                 <span>Learn more</span>
                 <ArrowRight className="w-4 h-4 text-gray-400" />
               </button>
@@ -53,43 +76,58 @@ export default function HeroSection() {
                 {/* 2x2 Grid inside Card */}
                 <div className="grid grid-cols-2 gap-4 divide-x divide-y divide-slate-800/60 border-b border-slate-800/60 pb-6">
                   {/* Category 1 */}
-                  <div className="flex flex-col items-start p-2">
-                    <div className="w-full h-24 bg-[#334155]/50 rounded-lg flex items-center justify-center mb-3">
-                      <Monitor className="w-10 h-10 text-slate-400" />
+                  <div 
+                    onClick={() => handleCategoryClick('Computers')}
+                    className="flex flex-col items-start p-2 cursor-pointer group hover:bg-slate-800/40 rounded-lg transition-all"
+                  >
+                    <div className="w-full h-24 bg-[#334155]/50 group-hover:bg-[#334155] rounded-lg flex items-center justify-center mb-3 transition-colors">
+                      <Monitor className="w-10 h-10 text-slate-400 group-hover:text-white transition-colors" />
                     </div>
-                    <span className="text-sm font-semibold text-gray-200">Computers</span>
+                    <span className="text-sm font-semibold text-gray-200 group-hover:text-white">Computers</span>
                   </div>
 
                   {/* Category 2 */}
-                  <div className="flex flex-col items-start p-2 pl-4">
-                    <div className="w-full h-24 bg-[#334155]/50 rounded-lg flex items-center justify-center mb-3">
-                      <Gamepad2 className="w-10 h-10 text-slate-400" />
+                  <div 
+                    onClick={() => handleCategoryClick('Gaming')}
+                    className="flex flex-col items-start p-2 pl-4 cursor-pointer group hover:bg-slate-800/40 rounded-lg transition-all"
+                  >
+                    <div className="w-full h-24 bg-[#334155]/50 group-hover:bg-[#334155] rounded-lg flex items-center justify-center mb-3 transition-colors">
+                      <Gamepad2 className="w-10 h-10 text-slate-400 group-hover:text-white transition-colors" />
                     </div>
-                    <span className="text-sm font-semibold text-gray-200">Gaming</span>
+                    <span className="text-sm font-semibold text-gray-200 group-hover:text-white">Gaming</span>
                   </div>
 
                   {/* Category 3 */}
-                  <div className="flex flex-col items-start p-2 pt-4">
-                    <div className="w-full h-24 bg-[#334155]/50 rounded-lg flex items-center justify-center mb-3">
-                      <Tablet className="w-10 h-10 text-slate-400" />
+                  <div 
+                    onClick={() => handleCategoryClick('Phone/Tablets')}
+                    className="flex flex-col items-start p-2 pt-4 cursor-pointer group hover:bg-slate-800/40 rounded-lg transition-all"
+                  >
+                    <div className="w-full h-24 bg-[#334155]/50 group-hover:bg-[#334155] rounded-lg flex items-center justify-center mb-3 transition-colors">
+                      <Tablet className="w-10 h-10 text-slate-400 group-hover:text-white transition-colors" />
                     </div>
-                    <span className="text-sm font-semibold text-gray-200">Tablets</span>
+                    <span className="text-sm font-semibold text-gray-200 group-hover:text-white">Tablets</span>
                   </div>
 
                   {/* Category 4 */}
-                  <div className="flex flex-col items-start p-2 pt-4 pl-4">
-                    <div className="w-full h-24 bg-[#334155]/50 rounded-lg flex items-center justify-center mb-3">
-                      <ShoppingBag className="w-10 h-10 text-slate-400" />
+                  <div 
+                    onClick={() => handleCategoryClick('Fashion')}
+                    className="flex flex-col items-start p-2 pt-4 pl-4 cursor-pointer group hover:bg-slate-800/40 rounded-lg transition-all"
+                  >
+                    <div className="w-full h-24 bg-[#334155]/50 group-hover:bg-[#334155] rounded-lg flex items-center justify-center mb-3 transition-colors">
+                      <ShoppingBag className="w-10 h-10 text-slate-400 group-hover:text-white transition-colors" />
                     </div>
-                    <span className="text-sm font-semibold text-gray-200">Fashion</span>
+                    <span className="text-sm font-semibold text-gray-200 group-hover:text-white">Fashion</span>
                   </div>
                 </div>
               </div>
 
-              <a href="#" className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#3b82f6] hover:text-blue-400 transition-colors">
+              <button 
+                onClick={scrollToProducts}
+                className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#3b82f6] hover:text-blue-400 transition-colors cursor-pointer bg-transparent border-none p-0 text-left"
+              >
                 <span>Shop now</span>
                 <ArrowRight className="w-4 h-4" />
-              </a>
+              </button>
             </div>
 
             {/* Card 2: Shop Consumer Electronics */}
@@ -100,43 +138,58 @@ export default function HeroSection() {
                 {/* 2x2 Grid inside Card */}
                 <div className="grid grid-cols-2 gap-4 border-b border-slate-800/60 pb-6">
                   {/* Category 1 */}
-                  <div className="flex flex-col items-start p-2">
-                    <div className="w-full h-24 bg-[#334155]/50 rounded-lg flex items-center justify-center mb-3">
-                      <Laptop className="w-10 h-10 text-slate-400" />
+                  <div 
+                    onClick={() => handleCategoryClick('Computers')}
+                    className="flex flex-col items-start p-2 cursor-pointer group hover:bg-slate-800/40 rounded-lg transition-all"
+                  >
+                    <div className="w-full h-24 bg-[#334155]/50 group-hover:bg-[#334155] rounded-lg flex items-center justify-center mb-3 transition-colors">
+                      <Laptop className="w-10 h-10 text-slate-400 group-hover:text-white transition-colors" />
                     </div>
-                    <span className="text-sm font-semibold text-gray-200">Laptops</span>
+                    <span className="text-sm font-semibold text-gray-200 group-hover:text-white">Laptops</span>
                   </div>
 
                   {/* Category 2 */}
-                  <div className="flex flex-col items-start p-2">
-                    <div className="w-full h-24 bg-[#334155]/50 rounded-lg flex items-center justify-center mb-3">
-                      <Watch className="w-10 h-10 text-slate-400" />
+                  <div 
+                    onClick={() => handleCategoryClick('Electronics')}
+                    className="flex flex-col items-start p-2 cursor-pointer group hover:bg-slate-800/40 rounded-lg transition-all"
+                  >
+                    <div className="w-full h-24 bg-[#334155]/50 group-hover:bg-[#334155] rounded-lg flex items-center justify-center mb-3 transition-colors">
+                      <Watch className="w-10 h-10 text-slate-400 group-hover:text-white transition-colors" />
                     </div>
-                    <span className="text-sm font-semibold text-gray-200">Watches</span>
+                    <span className="text-sm font-semibold text-gray-200 group-hover:text-white">Watches</span>
                   </div>
 
                   {/* Category 3 */}
-                  <div className="flex flex-col items-start p-2">
-                    <div className="w-full h-24 bg-[#334155]/50 rounded-lg flex items-center justify-center mb-3">
-                      <Tablet className="w-10 h-10 text-slate-400" />
+                  <div 
+                    onClick={() => handleCategoryClick('Phone/Tablets')}
+                    className="flex flex-col items-start p-2 cursor-pointer group hover:bg-slate-800/40 rounded-lg transition-all"
+                  >
+                    <div className="w-full h-24 bg-[#334155]/50 group-hover:bg-[#334155] rounded-lg flex items-center justify-center mb-3 transition-colors">
+                      <Tablet className="w-10 h-10 text-slate-400 group-hover:text-white transition-colors" />
                     </div>
-                    <span className="text-sm font-semibold text-gray-200">Tablets</span>
+                    <span className="text-sm font-semibold text-gray-200 group-hover:text-white">Tablets</span>
                   </div>
 
                   {/* Category 4 */}
-                  <div className="flex flex-col items-start p-2">
-                    <div className="w-full h-24 bg-[#334155]/50 rounded-lg flex items-center justify-center mb-3">
-                      <Headphones className="w-10 h-10 text-slate-400" />
+                  <div 
+                    onClick={() => handleCategoryClick('Electronics')}
+                    className="flex flex-col items-start p-2 cursor-pointer group hover:bg-slate-800/40 rounded-lg transition-all"
+                  >
+                    <div className="w-full h-24 bg-[#334155]/50 group-hover:bg-[#334155] rounded-lg flex items-center justify-center mb-3 transition-colors">
+                      <Headphones className="w-10 h-10 text-slate-400 group-hover:text-white transition-colors" />
                     </div>
-                    <span className="text-sm font-semibold text-gray-200">Accessories</span>
+                    <span className="text-sm font-semibold text-gray-200 group-hover:text-white">Accessories</span>
                   </div>
                 </div>
               </div>
 
-              <a href="#" className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#3b82f6] hover:text-blue-400 transition-colors">
+              <button 
+                onClick={scrollToProducts}
+                className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#3b82f6] hover:text-blue-400 transition-colors cursor-pointer bg-transparent border-none p-0 text-left"
+              >
                 <span>Shop now</span>
                 <ArrowRight className="w-4 h-4" />
-              </a>
+              </button>
             </div>
 
           </div>
