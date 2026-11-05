@@ -2,11 +2,108 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ecommerce-frontend</title>
+    <title>ApexBazaar | Enterprise Multi-Vendor Marketplace</title>
+    <meta name="description" content="ApexBazaar is India's premier multi-vendor marketplace with 100,000+ products across all retail categories. Featuring atomic multi-seller split fulfillment, T+7 escrow protection, and sub-30ms search." />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <link rel="canonical" href="https://apexbazaar.com/" />
+
+    <!-- Open Graph Metadata -->
+    <meta property="og:site_name" content="ApexBazaar" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="ApexBazaar | Enterprise Multi-Vendor Marketplace" />
+    <meta property="og:description" content="Discover 100,000+ verified electronics, fashion, grocery, and books with multi-vendor split checkout and escrow guarantees." />
+    <meta property="og:url" content="https://apexbazaar.com/" />
+    <meta property="og:image" content="https://apexbazaar.com/android-chrome-512x512.png" />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- Twitter Card Metadata -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ApexBazaar | Enterprise Multi-Vendor Marketplace" />
+    <meta name="twitter:description" content="Discover 100,000+ verified electronics, fashion, grocery, and books with multi-vendor split checkout and escrow guarantees." />
+    <meta name="twitter:image" content="https://apexbazaar.com/android-chrome-512x512.png" />
+
+    <!-- Schema.org Organization and WebSite Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://hayroo.store/#organization",
+            "name": "Hayroo",
+            "legalName": "Hayroo Retail Private Limited",
+            "url": "https://hayroo.store/",
+            "logo": "https://hayroo.store/favicon-512x512.png",
+            "description": "Curated everyday electronics and dependable home essentials for every age.",
+            "email": "support@hayroo.store",
+            "telephone": "+919876543210",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Brigade Gateway, Malleshwaram",
+              "addressLocality": "Bengaluru",
+              "addressRegion": "Karnataka",
+              "postalCode": "560055",
+              "addressCountry": "IN"
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://hayroo.store/#website",
+            "url": "https://hayroo.store/",
+            "name": "Hayroo",
+            "publisher": {
+              "@id": "https://hayroo.store/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://hayroo.store/products?search={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ]
+      }
+    </script>
+
+    <!-- Favicons & App Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#047857" id="meta-theme-color" />
+
+    <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Anti-FOUC Theme Initialization (respects user choice and system preference) -->
+    <script>
+      (function() {
+        try {
+          const stored = localStorage.getItem('hayroo_theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = stored ? stored : (systemPrefersDark ? 'dark' : 'light');
+          if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+            const meta = document.getElementById('meta-theme-color');
+            if (meta) meta.setAttribute('content', '#0A130F');
+          } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.setAttribute('data-theme', 'light');
+            const meta = document.getElementById('meta-theme-color');
+            if (meta) meta.setAttribute('content', '#047857');
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
-  <body>
+  <body class="font-sans antialiased selection:bg-[#A7F3D0] selection:text-[#047857] dark:selection:bg-[#047857] dark:selection:text-[#FFFBEB]">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

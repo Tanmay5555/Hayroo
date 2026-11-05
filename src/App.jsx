@@ -1,289 +1,166 @@
-import { useState } from "react";
-import Navbar from "./assets/component/navbar";
-import Hero from "./assets/component/hero";
-import Category from "./assets/component/category";
-import FeaturedProduct from "./assets/component/featuredproduct";
-import ProductDetailSection from "./assets/component/productdetail";
-import Footer from "./assets/component/footer";
-import Modal from "./assets/component/modal";
-import CartDrawer from "./assets/component/cartdrawer";
-import WishlistDrawer from "./assets/component/wishlistdrawer";
-import QuickViewModal from "./assets/component/quickviewmodal";
-import RecentlyViewed from "./assets/component/recentlyviewed";
-import ToastContainer from "./assets/component/toast";
-import FlashBanner from "./assets/component/flashbanner";
-import CheckoutModal from "./assets/component/checkoutmodal";
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 
-import initialProducts from "./assets/data/product";
+// Layout & Global Navigation Components
+import ScrollProgressBar from './components/ScrollProgressBar';
+import FlashSaleBanner from './components/FlashSaleBanner';
+import Navbar from './components/Navbar';
+import BackToTop from './components/BackToTop';
+import FloatingContactButton from './components/FloatingContactButton';
+import Footer from './components/Footer';
 
-function App() {
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [searchQuery, setSearchQuery] = useState("");
-  
-  // Cart State (Pre-filled with 3 items)
-  const [cartItems, setCartItems] = useState([
-    { ...initialProducts[0], quantity: 1 },
-    { ...initialProducts[1], quantity: 1 },
-    { ...initialProducts[4], quantity: 1 },
-  ]);
+// Drawers, Overlays & Banners
+import CartDrawer from './components/CartDrawer';
+import WishlistDrawer from './components/WishlistDrawer';
+import CompareBar from './components/CompareBar';
+import CompareModal from './components/CompareModal';
+import AuthModal from './components/AuthModal';
+import ChatBotWidget from './components/ChatBotWidget';
+import CookieBanner from './components/CookieBanner';
 
-  // Wishlist State
-  const [wishlistItems, setWishlistItems] = useState([
-    initialProducts[2],
-  ]);
+// Pages
+import HomePage from './pages/HomePage';
+import ProductsPage from './pages/ProductsPage';
+import ProductDetailPage from './pages/ProductDetailPage';
+import CartPage from './pages/CartPage';
+import CheckoutPage from './pages/CheckoutPage';
+import AccountPage from './pages/AccountPage';
+import SellerPage from './pages/SellerPage';
+import DeliveryPage from './pages/DeliveryPage';
+import AdminPage from './pages/AdminPage';
+import FaqPage from './pages/FaqPage';
+import ContactPage from './pages/ContactPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsPage from './pages/TermsPage';
+import NotFoundPage from './pages/NotFoundPage';
 
-  // Session History State
-  const [recentlyViewed, setRecentlyViewed] = useState([]);
+// Zustand Stores
+import { useAuthStore } from './store/useAuthStore';
+import { useCartStore } from './store/useCartStore';
+import { useWishlistStore } from './store/useWishlistStore';
+import { useThemeStore } from './store/useThemeStore';
 
-  // Drawers & Modals State
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-  const [quickViewProduct, setQuickViewProduct] = useState(null);
-  const [activeModal, setActiveModal] = useState(null);
+// Analytics & UTM Tracking
+import { useUtmTracker } from './hooks/useUtmTracker';
+import { initAnalyticsIfConsented, trackPageView } from './utils/analytics';
 
-  // Toast Notifications State
-  const [toasts, setToasts] = useState([]);
+/**
+ * AppTracker handles UTM parameter attribution and page view tracking
+ * on route transitions, strictly adhering to cookie consent preferences.
+ */
+function AppTracker() {
+  const location = useLocation();
+  useUtmTracker();
 
-  const addToast = (message, type = "success") => {
-    const id = Date.now() + Math.random();
-    setToasts((prev) => [...prev, { id, message, type }]);
-  };
+  useEffect(() => {
+    trackPageView(location.pathname + location.search, document.title);
+  }, [location.pathname, location.search]);
 
-  const removeToast = (id) => {
-    setToasts((prev) => prev.filter((t) => t.id !== id));
-  };
-
-  // Reset to Home Catalog
-  const handleHomeClick = () => {
-    setSelectedProduct(null);
-    setActiveCategory("All");
-    setSearchQuery("");
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  // Category Selector
-  const handleSelectCategory = (categoryName) => {
-    setActiveCategory(categoryName);
-    setSelectedProduct(null);
-    const el = document.getElementById('featured-products');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  // Live Search
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-    setSelectedProduct(null);
-    const el = document.getElementById('featured-products');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  // Product Selection & Session Tracking
-  const handleSelectProduct = (product) => {
-    setSelectedProduct(product);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    // Track recently viewed
-    setRecentlyViewed((prev) => {
-      const filtered = prev.filter((p) => p.id !== product.id);
-      return [product, ...filtered].slice(0, 8);
-    });
-  };
-
-  // Add to Cart Logic
-  const handleAddToCart = (product) => {
-    setCartItems((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
-      if (existing) {
-        return prev.map((item) =>
-          item.id === product.id ? { ...item, quantity: (item.quantity || 1) + (product.quantity || 1) } : item
-        );
-      }
-      return [...prev, { ...product, quantity: product.quantity || 1 }];
-    });
-    addToast(`🛒 Added ${product.title || 'item'} to your Cart!`, 'success');
-    setIsCartOpen(true);
-  };
-
-  // Cart Drawer Quantity Adjusters
-  const handleUpdateCartQuantity = (id, newQty) => {
-    if (newQty <= 0) {
-      handleRemoveCartItem(id);
-    } else {
-      setCartItems((prev) =>
-        prev.map((item) => (item.id === id ? { ...item, quantity: newQty } : item))
-      );
-    }
-  };
-
-  const handleRemoveCartItem = (id) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
-    addToast('Item removed from Cart', 'info');
-  };
-
-  const handleClearCart = () => {
-    setCartItems([]);
-    addToast('Cart cleared', 'info');
-  };
-
-  const handleOpenCheckout = () => {
-    setIsCartOpen(false);
-    setIsCheckoutOpen(true);
-  };
-
-  const handleOrderComplete = (orderId) => {
-    addToast(`🎉 Order #${orderId} placed successfully!`, 'success');
-    setCartItems([]);
-  };
-
-  // Wishlist Logic
-  const handleToggleWishlist = (product) => {
-    setWishlistItems((prev) => {
-      const exists = prev.some((item) => item.id === product.id);
-      if (exists) {
-        addToast(`Removed ${product.title} from Wishlist`, 'info');
-        return prev.filter((item) => item.id !== product.id);
-      } else {
-        addToast(`❤️ Saved ${product.title} to Wishlist!`, 'success');
-        return [...prev, product];
-      }
-    });
-  };
-
-  const handleMoveWishlistToCart = (product) => {
-    handleAddToCart(product);
-    setWishlistItems((prev) => prev.filter((item) => item.id !== product.id));
-  };
-
-  const handleShareProduct = (product) => {
-    navigator.clipboard.writeText(window.location.href);
-    addToast(`🔗 Copied share link for ${product?.title || 'product'}!`, 'info');
-  };
-
-  // Total Quantity Calculation for Badge
-  const totalCartCount = cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
-  const wishlistIds = wishlistItems.map((item) => item.id);
-
-  return (
-    <div className="bg-[#0b1120] min-h-screen flex flex-col font-sans">
-      {/* Top Flash Sale Live Countdown Banner */}
-      <FlashBanner />
-
-      {/* Sticky Top Navigation Bar */}
-      <Navbar 
-        onHomeClick={handleHomeClick}
-        onSearch={handleSearch}
-        searchQuery={searchQuery}
-        cartCount={totalCartCount}
-        wishlistCount={wishlistItems.length}
-        onOpenModal={(type) => setActiveModal(type)}
-        onOpenCart={() => setIsCartOpen(true)}
-        onOpenWishlist={() => setIsWishlistOpen(true)}
-      />
-
-      {/* Main Content Area */}
-      {selectedProduct ? (
-        <main className="flex-1">
-          <ProductDetailSection 
-            product={selectedProduct} 
-            onBack={() => {
-              setSelectedProduct(null);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            onAddToCart={(details) => handleAddToCart({ ...selectedProduct, ...details })}
-            onAddToFavorites={() => handleToggleWishlist(selectedProduct)}
-            onShareProduct={handleShareProduct}
-          />
-        </main>
-      ) : (
-        <main className="flex-1">
-          <Hero 
-            onSelectCategory={handleSelectCategory}
-          />
-          <Category 
-            activeCategory={activeCategory}
-            onSelectCategory={handleSelectCategory}
-          />
-          <FeaturedProduct 
-            activeCategory={activeCategory}
-            searchQuery={searchQuery}
-            onSelectProduct={handleSelectProduct}
-            onAddToCart={handleAddToCart}
-            onToggleWishlist={handleToggleWishlist}
-            wishlistIds={wishlistIds}
-            onQuickView={(prod) => setQuickViewProduct(prod)}
-          />
-          <RecentlyViewed 
-            items={recentlyViewed}
-            onSelectProduct={handleSelectProduct}
-          />
-        </main>
-      )}
-
-      {/* Footer */}
-      <Footer 
-        onSelectCategory={handleSelectCategory}
-        onOpenModal={(type) => setActiveModal(type)}
-      />
-
-      {/* Slide-Over Shopping Cart Drawer */}
-      <CartDrawer 
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        cartItems={cartItems}
-        onUpdateQuantity={handleUpdateCartQuantity}
-        onRemoveItem={handleRemoveCartItem}
-        onClearCart={handleClearCart}
-        onCheckout={handleOpenCheckout}
-      />
-
-      {/* Slide-Over Wishlist Drawer */}
-      <WishlistDrawer 
-        isOpen={isWishlistOpen}
-        onClose={() => setIsWishlistOpen(false)}
-        wishlistItems={wishlistItems}
-        onRemoveWishlist={(id) => setWishlistItems((prev) => prev.filter((i) => i.id !== id))}
-        onMoveToCart={handleMoveWishlistToCart}
-      />
-
-      {/* Quick View Spec Overlay Modal */}
-      <QuickViewModal 
-        product={quickViewProduct}
-        isOpen={!!quickViewProduct}
-        onClose={() => setQuickViewProduct(null)}
-        onAddToCart={handleAddToCart}
-        onViewDetails={handleSelectProduct}
-      />
-
-      {/* Multi-Step Checkout Wizard Modal */}
-      <CheckoutModal 
-        isOpen={isCheckoutOpen}
-        onClose={() => setIsCheckoutOpen(false)}
-        cartItems={cartItems}
-        onOrderComplete={handleOrderComplete}
-      />
-
-      {/* Informational & Auth Modal Dialogs */}
-      <Modal 
-        isOpen={!!activeModal}
-        onClose={() => setActiveModal(null)}
-        modalType={activeModal}
-        cartCount={totalCartCount}
-        onResetCart={handleClearCart}
-      />
-
-      {/* Floating Animated Toast Notifications */}
-      <ToastContainer 
-        toasts={toasts}
-        onRemoveToast={removeToast}
-      />
-    </div>
-  );
+  return null;
 }
 
-export default App;
+export default function App() {
+  const { fetchUser } = useAuthStore();
+  const { fetchCart } = useCartStore();
+  const { fetchWishlist } = useWishlistStore();
+  const { initTheme } = useThemeStore();
+
+  useEffect(() => {
+    initTheme();
+    initAnalyticsIfConsented();
+    fetchUser();
+    fetchCart();
+    fetchWishlist();
+  }, [initTheme, fetchUser, fetchCart, fetchWishlist]);
+
+  return (
+    <Router>
+      <AppTracker />
+      <div className="min-h-screen flex flex-col font-sans bg-[var(--color-bg)] text-[var(--color-text)] transition-colors duration-200">
+        
+        {/* Subtle, Thin Scroll Progress Indicator */}
+        <ScrollProgressBar />
+
+        {/* Skip to Main Content Link for Keyboard and Screen Reader Accessibility */}
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
+
+        {/* Global Toast Notifications (Styled to 6px radius and Hayroo tokens) */}
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 3500,
+            style: {
+              background: 'var(--color-card)',
+              color: 'var(--color-text)',
+              border: '1px solid var(--color-border)',
+              borderRadius: '6px',
+              fontSize: '14px',
+              fontFamily: 'var(--font-sans)',
+              boxShadow: 'var(--shadow-md)',
+            },
+            success: {
+              iconTheme: {
+                primary: '#047857',
+                secondary: '#FFFBEB',
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: '#DC2626',
+                secondary: '#FFFFFF',
+              },
+            },
+          }}
+        />
+
+        {/* Announcement Header */}
+        <FlashSaleBanner />
+
+        {/* Sticky Header with Logo, Navigation, Search, and Cart */}
+        <Navbar />
+
+        {/* Semantic Main Content Area */}
+        <main id="main-content" tabIndex={-1} className="flex-1 focus:outline-none">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/products" element={<ProductsPage />} />
+            <Route path="/product/:idOrSlug" element={<ProductDetailPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/account" element={<AccountPage />} />
+            <Route path="/seller" element={<SellerPage />} />
+            <Route path="/delivery" element={<DeliveryPage />} />
+            <Route path="/admin" element={<AdminPage />} />
+            <Route path="/faq" element={<FaqPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/404" element={<NotFoundPage />} />
+            <Route path="*" element={<Navigate to="/404" replace />} />
+          </Routes>
+        </main>
+
+        {/* Global Overlays & Modals */}
+        <CartDrawer />
+        <WishlistDrawer />
+        <CompareBar />
+        <CompareModal />
+        <AuthModal />
+
+        {/* Floating Quick Action Controls */}
+        <FloatingContactButton />
+        <BackToTop />
+        <ChatBotWidget />
+
+        {/* Cookie Consent Banner */}
+        <CookieBanner />
+
+        {/* Complete Directory Footer */}
+        <Footer />
+      </div>
+    </Router>
+  );
+}
