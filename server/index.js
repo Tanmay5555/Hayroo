@@ -9,18 +9,23 @@ import { seedDatabase } from './seed.js';
 const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
-  await connectDB();
-
-  // Auto-seed database if empty
-  const productCount = await Product.countDocuments();
-  if (productCount === 0) {
-    console.log('🌱 Database is empty. Running initial 30+ product seed...');
-    await seedDatabase();
+  try {
+    const conn = await connectDB();
+    if (conn) {
+      // Auto-seed database if empty
+      const productCount = await Product.countDocuments().catch(() => 0);
+      if (productCount === 0) {
+        console.log('🌱 Database is empty. Running initial 30+ product seed...');
+        await seedDatabase().catch((e) => console.warn('Seed warning:', e.message));
+      }
+    }
+  } catch (dbErr) {
+    console.error('⚠️ Database connection notice:', dbErr.message);
   }
 
-  app.listen(PORT, () => {
-    console.log(`🚀 ApexBazaar Backend running on http://localhost:${PORT}`);
-    console.log(`📚 Swagger API Docs available at http://localhost:${PORT}/api-docs`);
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 ApexBazaar Backend running on http://0.0.0.0:${PORT}`);
+    console.log(`📚 Swagger API Docs available at http://0.0.0.0:${PORT}/api-docs`);
   });
 };
 

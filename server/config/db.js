@@ -24,7 +24,8 @@ export const connectDB = async () => {
       return conn;
     } catch (memErr) {
       console.error(`❌ Failed to start In-Memory MongoDB: ${memErr.message}`);
-      process.exit(1);
+      console.warn('⚠️ Server will continue running to serve health checks and await valid database credentials.');
+      return null;
     }
   }
 };
