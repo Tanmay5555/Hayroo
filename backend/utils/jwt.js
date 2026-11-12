@@ -52,25 +52,30 @@ export const verifyRefreshToken = (token) => {
   return jwt.verify(token, getRefreshSecret());
 };
 
-export const setAuthCookies = (res, accessToken, refreshToken) => {
+const getAuthCookieOptions = () => {
   const isProduction = process.env.NODE_ENV === 'production';
-  res.cookie('accessToken', accessToken, {
+  return {
     httpOnly: true,
     secure: isProduction,
-    sameSite: 'lax',
+    sameSite: isProduction ? 'none' : 'lax',
+  };
+};
+
+export const setAuthCookies = (res, accessToken, refreshToken) => {
+  const baseOptions = getAuthCookieOptions();
+  res.cookie('accessToken', accessToken, {
+    ...baseOptions,
     maxAge: 24 * 60 * 60 * 1000,
   });
 
   res.cookie('refreshToken', refreshToken, {
-    httpOnly: true,
-    secure: isProduction,
-    sameSite: 'lax',
+    ...baseOptions,
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 };
 
 export const clearAuthCookies = (res) => {
-  const isProduction = process.env.NODE_ENV === 'production';
-  res.clearCookie('accessToken', { httpOnly: true, secure: isProduction, sameSite: 'lax' });
-  res.clearCookie('refreshToken', { httpOnly: true, secure: isProduction, sameSite: 'lax' });
+  const baseOptions = getAuthCookieOptions();
+  res.clearCookie('accessToken', baseOptions);
+  res.clearCookie('refreshToken', baseOptions);
 };
