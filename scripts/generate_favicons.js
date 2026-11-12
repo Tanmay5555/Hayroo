@@ -169,7 +169,9 @@ function createIcoFromPng(png32Buffer) {
   return Buffer.concat([header, entry, png32Buffer]);
 }
 
-const publicDir = path.resolve('public');
+const publicDir = fs.existsSync(path.resolve('frontend/public'))
+  ? path.resolve('frontend/public')
+  : path.resolve('public');
 
 // Generate PNGs
 const sizes = [

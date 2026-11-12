@@ -12,6 +12,8 @@ coverage/
 dist/
 dist-ssr/
 build/
+backend/uploads/*
+!backend/uploads/.gitkeep
 
 # Environment Variables & Secrets
 .env

@@ -11,6 +11,51 @@
 
 ---
 
+## 📁 Repository Structure
+
+```text
+hayroo/
+├── frontend/                # React 19 + Vite + Tailwind CSS Frontend
+│   ├── public/              # Static assets, favicons, site.webmanifest
+│   ├── src/                 # Application source code
+│   │   ├── api/             # Axios client & request interceptors
+│   │   ├── assets/          # Component media & images
+│   │   ├── components/      # UI components (storefront, seller, admin, delivery)
+│   │   ├── hooks/           # Custom React hooks
+│   │   ├── pages/           # Route views & sub-portals
+│   │   ├── store/           # Zustand client state stores
+│   │   └── utils/           # Helper utilities
+│   ├── index.html           # Main HTML entrypoint
+│   ├── vite.config.js       # Vite bundler configuration
+│   ├── eslint.config.js     # Frontend ESLint configuration
+│   ├── .env.example         # Frontend environment templates
+│   └── package.json         # Frontend dependencies & scripts
+│
+├── backend/                 # Node.js + Express REST API & Database
+│   ├── config/              # Database (MongoDB/Supabase), Firebase & Swagger setup
+│   ├── controllers/         # Endpoint request controllers
+│   ├── middleware/          # Auth, RBAC, error & upload middlewares
+│   ├── models/              # Mongoose data models
+│   ├── prisma/              # Prisma schema & database migrations
+│   ├── routes/              # Express API route declarations
+│   ├── services/            # Business logic & payment services
+│   ├── utils/               # JWT token & formatting utilities
+│   ├── uploads/             # Static file uploads directory
+│   ├── __tests__/           # Jest & Supertest integration tests
+│   ├── app.js               # Express application initialization
+│   ├── index.js             # Server entrypoint (port 5000)
+│   ├── seed.js              # Initial database seed script
+│   ├── .env.example         # Backend environment templates
+│   └── package.json         # Backend dependencies & scripts
+│
+├── docs/                    # Complete architectural, API & design documentation
+├── scripts/                 # Utility automation scripts
+├── package.json             # Root workspace orchestration
+└── .env.example             # Global environment configuration
+```
+
+---
+
 ## 📑 Complete Documentation Index
 
 All architectural, security, design, and operational specifications are written and ratified before implementation. The documentation represents the single source of truth for the codebase.
@@ -48,7 +93,7 @@ flowchart TD
     end
     Nginx --> FrontendApp
 
-    subgraph BackendApp ["Modular Monolith Backend (NestJS 10)"]
+    subgraph BackendApp ["Modular Monolith Backend (Node.js & Express)"]
         Gateway["REST API Gateway (OpenAPI / Helmet / RateLimiter)"]
         
         subgraph CoreModules ["Core Domain Modules"]
@@ -78,28 +123,27 @@ flowchart TD
 ```
 
 ### 1. Frontend Architecture
-- **Framework & Runtime**: React 19, TypeScript 5.5, Vite 6.0.
-- **Routing & Navigation**: React Router v7 with lazy-loaded route segments and prefetching.
-- **State Management**: **Zustand** for lightweight client state (theme, cart drawer, modals) + **TanStack Query v5** for optimistic server-state caching, background revalidation, and mutation rollback.
-- **Styling & UI**: Tailwind CSS v4, dynamic CSS variables for theme support, Lucide React iconography, WCAG 2.1 AA accessible patterns.
-- **SEO & Social Metadata**: React Helmet Async + static XML sitemap generation for dynamic product and category pages.
+- **Framework & Runtime**: React 19, Vite 8, Tailwind CSS v4.
+- **Routing & Navigation**: React Router v7 with route segments.
+- **State Management**: **Zustand** for lightweight client state (theme, cart drawer, modals, guest sessions).
+- **Styling & UI**: Tailwind CSS v4, dynamic CSS variables for theme support, Lucide React iconography.
+- **API Communication**: Axios with automatic request interception, guest session tagging, and token refresh.
 
 ### 2. Backend & API Services
-- **Runtime & Framework**: Node.js 22 LTS, NestJS 10 (Modular Monolith architecture with strict domain boundaries ready for microservices decomposition).
-- **Communication Protocol**: Type-safe REST APIs documented with OpenAPI / Swagger v3.
-- **Validation & Transformation**: `class-validator`, `class-transformer`, and Zod validation schemas.
-- **Authentication & Security**: Argon2id password hashing, rotating JWT Access/Refresh tokens, Redis-backed token revocation, Helmet HTTP headers, CORS whitelisting, and strict rate-limiting guards.
+- **Runtime & Framework**: Node.js 22 LTS, Express 5.
+- **Communication Protocol**: REST APIs documented with OpenAPI / Swagger v3.
+- **Validation & Transformation**: Zod validation schemas.
+- **Authentication & Security**: Argon2id/bcrypt password hashing, rotating JWT Access/Refresh tokens, Helmet HTTP headers, CORS whitelisting, and rate-limiting guards.
 
 ### 3. Data, Caching & Search Engine
-- **Primary Relational DB**: PostgreSQL 16 managed via Prisma ORM with connection pooling (PgBouncer). Dynamic product specifications stored in high-performance `JSONB` with GIN indexing.
-- **In-Memory Cache & Session Store**: Redis 7 cluster for session tracking, cart persistence, distributed locks (`redlock`), and high-speed API response caching.
-- **Search & Discovery Engine**: **Meilisearch** cluster delivering sub-30ms response times, typo tolerance, synonyms, prefix search, and multi-facet filtering across millions of SKU variations.
-- **Message Queues & Background Workers**: **BullMQ** on Redis for handling transactional emails/SMS, order event fan-out, inventory adjustments, and scheduled escrow payout releases.
+- **Primary Database**: MongoDB / PostgreSQL managed via Prisma ORM.
+- **In-Memory Cache & Session Store**: Redis 7 cluster for session tracking, cart persistence, and high-speed API response caching.
+- **Search & Discovery Engine**: Catalog search with multi-facet filtering across SKU variations.
 
 ### 4. Storage, Payments & Logistics
-- **Object Storage & Media**: AWS S3 / Cloudflare R2 bucket with Cloudinary CDN integration for on-the-fly responsive WebP/AVIF generation.
-- **Payment & Split Settlement**: **Razorpay** (UPI Intent, Cards, NetBanking, COD with OTP validation, Razorpay Route for automated marketplace commission split & escrow hold) + **Stripe Connect** international fallback.
-- **Logistics & Tracking**: Hybrid integration with **Shiprocket & Delhivery APIs** for automated AWB generation and multi-carrier courier tracking, supplemented with an internal **Delivery Partner Web/PWA** interface.
+- **Object Storage & Media**: Local uploads and Firebase Cloud Storage.
+- **Payment & Split Settlement**: **Razorpay** (UPI Intent, Cards, NetBanking, COD with OTP validation).
+- **Logistics & Tracking**: Multi-carrier courier tracking with Delivery Partner Web/PWA interface.
 
 ---
 
@@ -121,47 +165,35 @@ ApexBazaar provides dedicated experiences and authorization boundaries for five 
 
 ### Prerequisites
 - **Node.js**: `v20.x` or `v22.x` LTS
-- **Docker Desktop**: `v24+` & **Docker Compose**: `v2.20+`
-- **Package Manager**: `npm` or `pnpm` (`v9+`)
+- **Package Manager**: `npm` or `pnpm`
 
-### 1. Clone & Setup Environment
+### 1. Setup Environment
 ```bash
-# Clone the repository
-git clone https://github.com/your-org/apexbazaar.git
-cd apexbazaar
-
 # Copy sample environment configuration
 cp .env.example .env
+cp frontend/.env.example frontend/.env
+cp backend/.env.example backend/.env
 ```
 
-### 2. Launch Supporting Infrastructure (Docker)
+### 2. Install Dependencies & Seed Database
 ```bash
-# Launch PostgreSQL, Redis, and Meilisearch
-docker compose -f docker-compose.dev.yml up -d
-
-# Verify all services are healthy
-docker compose -f docker-compose.dev.yml ps
-```
-
-### 3. Install Dependencies & Seed Database
-```bash
-# Install root, backend, and frontend dependencies
+# Install dependencies across workspaces (root, frontend, and backend)
 npm install
-
-# Apply database migrations via Prisma
-npx prisma migrate dev --name init
 
 # Seed initial categories, admin user, and sample multi-vendor products
 npm run seed
+# (or cd backend && npm run seed)
 ```
 
-### 4. Run Development Servers
+### 3. Run Development Servers
 ```bash
-# Run backend API server (NestJS on port 4000)
-npm run start:dev:api
+# Run backend API server (Express on port 5000)
+npm run dev:backend
+# (or cd backend && npm run dev)
 
 # Run frontend application (Vite on port 5173) in a separate terminal
-npm run start:dev:web
+npm run dev:frontend
+# (or cd frontend && npm run dev)
 ```
 
 Access the interfaces:
@@ -169,8 +201,7 @@ Access the interfaces:
 - **Seller Portal**: `http://localhost:5173/seller`
 - **Admin Hub**: `http://localhost:5173/admin`
 - **Delivery Partner PWA**: `http://localhost:5173/delivery`
-- **Swagger API Docs**: `http://localhost:4000/api/docs`
-- **Meilisearch Dashboard**: `http://localhost:7700`
+- **Swagger API Docs**: `http://localhost:5000/api-docs`
 
 ---
 
