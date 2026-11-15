@@ -21,8 +21,8 @@ export const connectDB = async () => {
     return null;
   }
 
-  // Ensure SRV records resolve smoothly on Windows / restrictive ISP DNS
-  if (uri.startsWith('mongodb+srv://')) {
+  // On Windows / local development, fallback to public DNS if ISP blocks SRV records
+  if (uri.startsWith('mongodb+srv://') && process.platform === 'win32') {
     try {
       dns.setServers(['8.8.8.8', '1.1.1.1']);
     } catch {}
