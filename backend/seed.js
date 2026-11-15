@@ -393,9 +393,25 @@ export const seedDatabase = async () => {
     console.log('🌱 4. Seeding Promotional Coupons...');
     await Coupon.create([
       {
+        code: 'HAYROO10',
+        discountPercent: 10,
+        minOrderAmount: 499,
+        maxDiscountAmount: 1000,
+        expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+        isActive: true,
+      },
+      {
+        code: 'HAYROO15',
+        discountPercent: 15,
+        minOrderAmount: 2000,
+        maxDiscountAmount: 1500,
+        expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+        isActive: true,
+      },
+      {
         code: 'APEX10',
         discountPercent: 10,
-        minOrderAmount: 999,
+        minOrderAmount: 499,
         maxDiscountAmount: 1000,
         expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
         isActive: true,

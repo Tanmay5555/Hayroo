@@ -27,7 +27,7 @@ export default function AdminPage() {
     canonicalPath: '/admin',
   });
 
-  const { user } = useAuthStore();
+  const { user, isLoading: isAuthLoading } = useAuthStore();
 
   const [activeTab, setActiveTab] = useState('metrics'); // 'metrics' | 'products' | 'orders' | 'tickets'
   const [stats, setStats] = useState(null);
@@ -65,13 +65,14 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
+    if (isAuthLoading) return;
     if (!user || user.role?.toUpperCase() !== 'ADMIN') {
       navigate('/account');
       toast.error('Admin privileges required to access this portal');
       return;
     }
     fetchAdminData();
-  }, [user, navigate]);
+  }, [user, isAuthLoading, navigate]);
 
   const handleAddProductSubmit = async (e) => {
     e.preventDefault();
@@ -127,7 +128,7 @@ export default function AdminPage() {
     }
   };
 
-  if (isLoading) {
+  if (isAuthLoading || isLoading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6 animate-pulse">
         <div className="h-28 card rounded-md" />

@@ -2,7 +2,6 @@ import React from 'react';
 import { X, Scale, ShoppingBag, Check, Minus } from 'lucide-react';
 import { useCompareStore } from '../store/useCompareStore';
 import { useCartStore } from '../store/useCartStore';
-import toast from 'react-hot-toast';
 
 export default function CompareModal() {
   const { compareItems, isCompareModalOpen, setCompareModalOpen, removeCompare } = useCompareStore();
@@ -93,7 +92,6 @@ export default function CompareModal() {
                           type="button"
                           onClick={() => {
                             addToCart(prod, 1);
-                            toast.success(`Added ${prod.title} to cart`);
                           }}
                           className="btn-primary btn-sm flex items-center gap-1 w-full justify-center"
                         >

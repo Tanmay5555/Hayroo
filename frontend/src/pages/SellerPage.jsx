@@ -186,11 +186,11 @@ export default function SellerPage() {
               Verified Seller ({kycStatusLabel})
             </span>
             <span className="font-mono text-[11px] text-[var(--color-text-subtle)]">
-              apex-electronics
+              {kycData?.storeSlug || (user?.email ? user.email.split('@')[0] : 'merchant-store')}
             </span>
           </div>
           <h1 className="text-2xl font-semibold text-[var(--color-text)]">
-            Apex Electronics Direct
+            {kycData?.businessName || user?.fullName || 'Seller Operations'}
           </h1>
           <p className="text-xs text-[var(--color-text-muted)]">
             Manage split sub-orders, dispatch labels, catalog SKUs, and T+7 escrow payouts.

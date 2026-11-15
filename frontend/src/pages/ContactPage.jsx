@@ -45,7 +45,7 @@ export default function ContactPage() {
   const onSubmit = async (data) => {
     // Simulate API submission
     await new Promise((resolve) => setTimeout(resolve, 600));
-    setSubmittedData(data);
+    setSubmittedData({ ...data, ticketId: Date.now().toString().slice(-6) });
     setIsSubmitted(true);
     toast.success('Your message has been sent to Hayroo Customer Support!');
     reset();
@@ -157,7 +157,7 @@ export default function ContactPage() {
                 <span>Message Received Successfully</span>
               </div>
               <p className="text-[var(--color-text-muted)] leading-relaxed">
-                Thank you, <strong className="text-[var(--color-text)]">{submittedData.fullName}</strong>. A support ticket has been opened under reference ID <strong className="font-mono text-[var(--color-text)]">#TKT-{Date.now().toString().slice(-6)}</strong>. We have dispatched a confirmation email to <strong className="text-[var(--color-text)]">{submittedData.email}</strong>.
+                Thank you, <strong className="text-[var(--color-text)]">{submittedData.fullName}</strong>. A support ticket has been opened under reference ID <strong className="font-mono text-[var(--color-text)]">#TKT-{submittedData.ticketId}</strong>. We have dispatched a confirmation email to <strong className="text-[var(--color-text)]">{submittedData.email}</strong>.
               </p>
               <button
                 type="button"

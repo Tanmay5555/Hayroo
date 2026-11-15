@@ -33,6 +33,12 @@ export default function AuthModal() {
   } = useAuthStore();
   const [tab, setTab] = useState(authModalTab || 'otp');
 
+  React.useEffect(() => {
+    if (authModalTab) {
+      setTab(authModalTab);
+    }
+  }, [authModalTab, isAuthModalOpen]);
+
   const [phoneInput, setPhoneInput] = useState('+919876543210');
   const [otpSent, setOtpSent] = useState(false);
   const [otpCode, setOtpCode] = useState('');

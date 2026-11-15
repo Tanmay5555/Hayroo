@@ -18,7 +18,7 @@ const FAQ_DATA = [
     category: 'Shipping',
     question: 'What are the shipping fees, and how do I qualify for free delivery?',
     answer:
-      'All orders totaling ₹1,500 or more automatically qualify for free standard express shipping nationwide. For orders below ₹1,500, a flat shipping charge of ₹99 is calculated at checkout.',
+      'All orders totaling ₹999 or more automatically qualify for free standard express shipping nationwide. For orders below ₹999, a flat shipping charge of ₹99 is calculated at checkout.',
   },
   {
     id: 'ship-3',

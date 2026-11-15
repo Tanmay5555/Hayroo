@@ -16,14 +16,19 @@ import QuickViewModal from '../components/QuickViewModal';
 import apiClient from '../api/axios';
 import { useSeo } from '../hooks/useSeo';
 
-const CATEGORIES = [
+const DEFAULT_CATEGORIES = [
   'All',
   'Computers',
-  'Phone/Tablets',
-  'Audio',
-  'Wearables',
-  'Smart Home',
-  'Accessories',
+  'Phone & Tablets',
+  'Electronics',
+  'TV & Home Entertainment',
+  'Gaming',
+  'Fashion & Apparel',
+  'Grocery & Gourmet Foods',
+  'Books',
+  'Home & Kitchen',
+  'Beauty & Personal Care',
+  'Sports & Fitness',
 ];
 
 const BRANDS = [
@@ -61,11 +66,28 @@ export default function ProductsPage() {
     canonicalPath: '/products',
   });
 
+  const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
   const [products, setProducts] = useState([]);
   const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 });
   const [isLoading, setIsLoading] = useState(true);
   const [quickViewProd, setQuickViewProd] = useState(null);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+
+  // Fetch real categories from backend with fallback
+  useEffect(() => {
+    let isMounted = true;
+    apiClient.get('/categories')
+      .then((res) => {
+        if (!isMounted) return;
+        const fetched = res.data?.data || [];
+        if (fetched.length > 0) {
+          const names = ['All', ...fetched.map((c) => c.name)];
+          setCategories(names);
+        }
+      })
+      .catch(() => {});
+    return () => { isMounted = false; };
+  }, []);
 
   // Sync state when URL params change (e.g. from navbar navigation)
   useEffect(() => {
@@ -332,7 +354,7 @@ export default function ProductsPage() {
               Categories
             </h3>
             <div className="space-y-1">
-              {CATEGORIES.map((cat) => (
+              {categories.map((cat) => (
                 <button
                   key={cat}
                   type="button"
@@ -436,7 +458,7 @@ export default function ProductsPage() {
               <div>
                 <h3 className="text-xs font-bold text-[var(--color-text)] uppercase mb-2">Category</h3>
                 <div className="grid grid-cols-2 gap-1.5">
-                  {CATEGORIES.map((cat) => (
+                  {categories.map((cat) => (
                     <button
                       key={cat}
                       type="button"

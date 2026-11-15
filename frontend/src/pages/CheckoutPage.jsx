@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   MapPin,
   Truck,
@@ -36,8 +36,6 @@ const addressSchema = z.object({
 });
 
 export default function CheckoutPage() {
-  const navigate = useNavigate();
-
   useSeo({
     title: 'Secure Checkout',
     description: 'Complete your Hayroo order with fast delivery, secure payment, and 1-year product warranty.',

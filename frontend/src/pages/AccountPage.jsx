@@ -30,7 +30,7 @@ export default function AccountPage() {
     canonicalPath: '/account',
   });
 
-  const { user, logout, updateProfile, addAddress, setAuthModal } = useAuthStore();
+  const { user, isLoading: isAuthLoading, logout, updateProfile, addAddress, deleteAddress, setAuthModal } = useAuthStore();
   const { wishlistItems } = useWishlistStore();
 
   const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'profile' | 'addresses' | 'wishlist'
@@ -49,6 +49,7 @@ export default function AccountPage() {
   const [editPhone, setEditPhone] = useState(user?.phoneNumber || user?.phone || '');
 
   useEffect(() => {
+    if (isAuthLoading) return;
     if (!user) {
       setAuthModal(true, 'login');
       return;
@@ -70,7 +71,7 @@ export default function AccountPage() {
     };
 
     fetchOrders();
-  }, [user, setAuthModal]);
+  }, [user, isAuthLoading, setAuthModal]);
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
@@ -414,12 +415,22 @@ export default function AccountPage() {
                   </div>
                 ) : (
                   user.addresses.map((addr, i) => (
-                    <div key={i} className="card p-4 space-y-1.5 text-xs">
+                    <div key={addr._id || i} className="card p-4 space-y-1.5 text-xs">
                       <div className="flex items-center justify-between">
                         <span className="font-bold text-[var(--color-text)] flex items-center gap-1">
                           <MapPin className="w-3.5 h-3.5 text-[var(--color-primary)]" aria-hidden="true" />
                           Address #{i + 1}
                         </span>
+                        {addr._id && (
+                          <button
+                            type="button"
+                            onClick={() => deleteAddress(addr._id)}
+                            className="p-1 text-[var(--color-text-subtle)] hover:text-[var(--color-error)] transition-colors"
+                            aria-label={`Delete Address #${i + 1}`}
+                          >
+                            <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
+                          </button>
+                        )}
                       </div>
                       <p className="text-[var(--color-text-muted)]">{addr.addressLine1 || addr.street}</p>
                       <p className="text-[var(--color-text-muted)]">{addr.city}, {addr.state} - {addr.postalCode || addr.pincode}</p>

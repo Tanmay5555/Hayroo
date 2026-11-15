@@ -163,6 +163,21 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
+  deleteAddress: async (addressId) => {
+    try {
+      const res = await apiClient.delete(`/users/addresses/${addressId}`);
+      const addresses = res.data?.data || [];
+      set((state) => ({
+        user: state.user ? { ...state.user, addresses } : state.user,
+      }));
+      toast.success('Address removed');
+      return true;
+    } catch {
+      toast.error('Failed to remove address');
+      return false;
+    }
+  },
+
   logout: async () => {
     try {
       await apiClient.post('/auth/logout');

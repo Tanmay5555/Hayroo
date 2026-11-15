@@ -57,7 +57,6 @@ export default function CartDrawer() {
       trackRemoveFromCart(itemToRemove);
       removeItem(itemToRemove._id || itemToRemove.id);
       setItemToRemove(null);
-      toast.success('Item removed from cart');
     }
   };
 

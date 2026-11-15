@@ -147,7 +147,6 @@ export default function ProductDetailPage() {
     if (!product || product.stock <= 0) return;
     addToCart(product, quantity, selectedColor, selectedSize);
     trackAddToCart(product, quantity);
-    toast.success(`Added ${quantity} unit(s) of ${product.title} to your cart`);
   };
 
   const handleBuyNow = () => {
