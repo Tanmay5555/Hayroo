@@ -24,9 +24,19 @@ try {
   const { initializeApp, cert, getApps } = await import('firebase-admin/app');
   const { getAuth } = await import('firebase-admin/auth');
 
-  const projectId = process.env.FIREBASE_PROJECT_ID;
-  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-  const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+  const projectId = process.env.FIREBASE_PROJECT_ID?.trim();
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL?.trim();
+  let rawPrivateKey = process.env.FIREBASE_PRIVATE_KEY?.trim();
+
+  let privateKey = null;
+  if (rawPrivateKey) {
+    if (rawPrivateKey.startsWith('"') && rawPrivateKey.endsWith('"')) {
+      rawPrivateKey = rawPrivateKey.slice(1, -1);
+    } else if (rawPrivateKey.startsWith("'") && rawPrivateKey.endsWith("'")) {
+      rawPrivateKey = rawPrivateKey.slice(1, -1);
+    }
+    privateKey = rawPrivateKey.replace(/\\n/g, '\n');
+  }
 
   if (
     projectId &&
@@ -61,7 +71,11 @@ try {
     console.log('🔥 Firebase Admin SDK initialized successfully for project:', projectId);
   } else {
     if (process.env.NODE_ENV === 'production') {
-      console.error('❌ Firebase Admin SDK is not configured in production.');
+      const missing = [];
+      if (!projectId) missing.push('FIREBASE_PROJECT_ID');
+      if (!clientEmail) missing.push('FIREBASE_CLIENT_EMAIL');
+      if (!privateKey) missing.push('FIREBASE_PRIVATE_KEY');
+      console.error(`❌ Firebase Admin SDK is not configured in production. Missing env vars: ${missing.join(', ')}`);
     }
     const mock = createMockFirebase();
     firebaseAuth = mock.auth;
