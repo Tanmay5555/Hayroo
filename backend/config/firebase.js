@@ -21,8 +21,8 @@ let firebaseStorage = null;
 let isConfigured = false;
 
 try {
-  const firebaseAdminModule = await import('firebase-admin');
-  admin = firebaseAdminModule.default || firebaseAdminModule;
+  const { initializeApp, cert, getApps } = await import('firebase-admin/app');
+  const { getAuth } = await import('firebase-admin/auth');
 
   const projectId = process.env.FIREBASE_PROJECT_ID;
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
@@ -35,21 +35,30 @@ try {
     !projectId.includes('your') &&
     projectId !== 'apexbazaar-dev'
   ) {
-    if (!admin.apps.length) {
-      admin.initializeApp({
-        credential: admin.credential.cert({
-          projectId,
-          clientEmail,
-          privateKey,
-        }),
-        storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-      });
-    }
-    firebaseAuth = admin.auth();
-    firestore = admin.firestore();
-    firebaseStorage = admin.storage();
+    const apps = getApps();
+    const app = apps.length > 0 ? apps[0] : initializeApp({
+      credential: cert({
+        projectId,
+        clientEmail,
+        privateKey,
+      }),
+      storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+    });
+    firebaseAuth = getAuth(app);
+    
+    // Optional firestore/storage if available
+    try {
+      const { getFirestore } = await import('firebase-admin/firestore');
+      firestore = getFirestore(app);
+    } catch {}
+
+    try {
+      const { getStorage } = await import('firebase-admin/storage');
+      firebaseStorage = getStorage(app);
+    } catch {}
+
     isConfigured = true;
-    console.log('🔥 Firebase Admin SDK initialized successfully.');
+    console.log('🔥 Firebase Admin SDK initialized successfully for project:', projectId);
   } else {
     if (process.env.NODE_ENV === 'production') {
       console.error('❌ Firebase Admin SDK is not configured in production.');
