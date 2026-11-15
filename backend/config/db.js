@@ -1,4 +1,12 @@
+import dns from 'dns';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import mongoose from 'mongoose';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+dotenv.config();
 
 export const connectDB = async () => {
   if (mongoose.connection.readyState >= 1) {
@@ -13,9 +21,16 @@ export const connectDB = async () => {
     return null;
   }
 
+  // Ensure SRV records resolve smoothly on Windows / restrictive ISP DNS
+  if (uri.startsWith('mongodb+srv://')) {
+    try {
+      dns.setServers(['8.8.8.8', '1.1.1.1']);
+    } catch {}
+  }
+
   try {
     const conn = await mongoose.connect(uri, {
-      serverSelectionTimeoutMS: isProd ? 8000 : 2000,
+      serverSelectionTimeoutMS: isProd ? 8000 : 8000,
       maxPoolSize: 20,
     });
     console.log(`🍃 MongoDB Connected: ${conn.connection.host}`);
