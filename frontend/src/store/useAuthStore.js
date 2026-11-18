@@ -15,7 +15,7 @@ const normalizeUser = (u) => {
   };
 };
 
-export const useAuthStore = create((set, get) => ({
+export const useAuthStore = create((set) => ({
   user: null,
   token: localStorage.getItem('apexbazaar_token') || localStorage.getItem('hayroo_token') || null,
   isLoading: true,

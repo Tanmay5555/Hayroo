@@ -67,6 +67,7 @@ export default function CheckoutPage() {
     if (cartItems.length > 0) {
       trackBeginCheckout(cartItems, subtotal);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const {

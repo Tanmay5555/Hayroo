@@ -75,7 +75,6 @@ export function initAnalyticsIfConsented() {
       s = b.getElementsByTagName(e)[0];
       s.parentNode.insertBefore(t, s);
     })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
-    /* eslint-enable */
 
     if (window.fbq) {
       window.fbq('init', META_PIXEL_ID);

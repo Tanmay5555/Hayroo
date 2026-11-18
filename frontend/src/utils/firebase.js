@@ -17,12 +17,12 @@ import {
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyA_MockApiKeyForLocalDev123456',
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'apexbazaar-dev.firebaseapp.com',
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'apexbazaar-dev',
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'apexbazaar-dev.appspot.com',
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '123456789012',
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:123456789012:web:abcdef123456',
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyBsj3NVuV2TNoU3j4Y0ORsxs1peqZNK47U',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'ecommerce-466ae.firebaseapp.com',
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'ecommerce-466ae',
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'ecommerce-466ae.firebasestorage.app',
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '178876023006',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:178876023006:web:e2c8cdda541c86c1b6c24f',
 };
 
 let app = null;

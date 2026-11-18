@@ -5,8 +5,8 @@
  */
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://mock.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'mock-anon-key';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://xnbxncwqwqjegsubibpj.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhuYnhuY3dxd3FqZWdzdWJpYnBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0OTEyMTksImV4cCI6MjExMDA2NzIxOX0._jLyCuhQ0l2xV2eThBfKLLbqjCIhRPigaDyJkvYNces';
 
 let supabaseClient;
 

@@ -78,6 +78,7 @@ export default function SellerPage() {
     if (isAuthorizedSeller) {
       fetchSellerData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthorizedSeller]);
 
   const handleGenerateLabel = async (subOrderId) => {
