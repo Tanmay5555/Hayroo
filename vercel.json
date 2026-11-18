@@ -5,11 +5,11 @@
   "rewrites": [
     {
       "source": "/api/v1/:path*",
-      "destination": "https://hayroo-backend.onrender.com/api/v1/:path*"
+      "destination": "https://hayroo-d6uv.onrender.com/api/v1/:path*"
     },
     {
       "source": "/uploads/:path*",
-      "destination": "https://hayroo-backend.onrender.com/uploads/:path*"
+      "destination": "https://hayroo-d6uv.onrender.com/uploads/:path*"
     },
     {
       "source": "/((?!api/|uploads/).*)",
