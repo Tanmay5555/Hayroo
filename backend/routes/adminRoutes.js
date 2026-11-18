@@ -12,6 +12,7 @@ import {
   getAllUsers,
   updateUserRole,
 } from '../controllers/adminController.js';
+import { updateSiteTheme } from '../controllers/themeController.js';
 import { authenticate, authorize } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -31,5 +32,6 @@ router.get('/users', getAllUsers);
 router.patch('/users/:id/role', updateUserRole);
 router.get('/disputes', getDisputes);
 router.patch('/disputes/:id', resolveDispute);
+router.patch('/theme', updateSiteTheme);
 
 export default router;

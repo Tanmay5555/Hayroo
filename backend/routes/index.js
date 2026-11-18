@@ -14,6 +14,7 @@ import couponRoutes from './couponRoutes.js';
 import adminRoutes from './adminRoutes.js';
 import chatRoutes from './chatRoutes.js';
 import { searchProducts, autocomplete } from '../controllers/productController.js';
+import { getSiteTheme } from '../controllers/themeController.js';
 import { upload } from '../middleware/uploadMiddleware.js';
 import { authenticate } from '../middleware/authMiddleware.js';
 
@@ -33,6 +34,9 @@ router.use('/wishlist', wishlistRoutes);
 router.use('/coupons', couponRoutes);
 router.use('/admin', adminRoutes);
 router.use('/chat', chatRoutes);
+
+// Public site theme configuration endpoint
+router.get('/theme', getSiteTheme);
 
 // Direct top-level search endpoints per REST API spec
 router.get('/search/autocomplete', autocomplete);

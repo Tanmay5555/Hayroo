@@ -29,9 +29,12 @@ import {
   Store,
   FileText,
   DollarSign,
+  Palette,
+  Sparkles,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../store/useAuthStore';
+import { useThemeStore } from '../store/useThemeStore';
 import apiClient from '../api/axios';
 import { useSeo } from '../hooks/useSeo';
 
@@ -45,6 +48,100 @@ const PRODUCT_CATEGORIES = [
   'Gaming',
   'Fashion',
   'Home & Kitchen',
+];
+
+const FESTIVAL_THEMES_CONFIG = [
+  {
+    id: 'default',
+    name: 'Botanical Emerald (हयरू क्लासिक)',
+    occasion: 'All-Season Signature Platform Palette',
+    description: 'Signature Hayroo human-centered design. Warm alabaster stone with calming botanical emerald green and slate accents.',
+    primaryColor: '#0F6B52',
+    primaryDarkColor: '#229A77',
+    accentColor: '#D1EAE2',
+    bgColor: '#FAF9F6',
+    bgDarkColor: '#0D0F0E',
+    icon: '🌿',
+    tag: 'Classic Standard',
+  },
+  {
+    id: 'diwali',
+    name: 'Diwali Festive Gold & Amber (दीपावली उत्सव)',
+    occasion: 'Dhanteras, Diwali, Festive Mega Sale & Weddings',
+    description: 'Luminous royal saffron amber, champagne alabaster, and warm festive glow. Deep charcoal amber obsidian in dark mode.',
+    primaryColor: '#B25E00',
+    primaryDarkColor: '#E58A1F',
+    accentColor: '#FDE8CB',
+    bgColor: '#FAF8F4',
+    bgDarkColor: '#110E0A',
+    icon: '🪔',
+    tag: 'Festive Gold',
+  },
+  {
+    id: 'holi',
+    name: 'Holi Spring Blossom & Coral (होली उत्सव)',
+    occasion: 'Holi, Spring Season, Vasant Panchami & Summer Sales',
+    description: 'Vibrant coral rosewood, terracotta sunset, and whisper blush pearl. Festive exuberance with refined minimalist balance.',
+    primaryColor: '#C93B62',
+    primaryDarkColor: '#E65A82',
+    accentColor: '#FAD4DE',
+    bgColor: '#FAF7F8',
+    bgDarkColor: '#120D10',
+    icon: '🎨',
+    tag: 'Spring Blossom',
+  },
+  {
+    id: 'eid',
+    name: 'Eid Celestial Jade & Teal (ईद व रमजान मुबारक)',
+    occasion: 'Ramadan, Eid-ul-Fitr, Eid-ul-Adha & Spiritual Celebrations',
+    description: 'Royal celestial teal, moonlit desert sand alabaster, and tranquil jade. Peaceful, dignified elegance in both light & dark modes.',
+    primaryColor: '#0D6E6E',
+    primaryDarkColor: '#21A3A3',
+    accentColor: '#CEE7E7',
+    bgColor: '#F7FAF9',
+    bgDarkColor: '#0C1010',
+    icon: '🌙',
+    tag: 'Celestial Jade',
+  },
+  {
+    id: 'christmas',
+    name: 'Christmas & Winter Velvet (क्रिसमस एवं नव वर्ष)',
+    occasion: 'Christmas, Boxing Day, New Year & Winter Clearance',
+    description: 'Velvet ruby crimson, alpine winter frost alabaster, and dark garnet obsidian. Cozy holiday warmth and high-energy checkout conversion.',
+    primaryColor: '#A82020',
+    primaryDarkColor: '#E03E3E',
+    accentColor: '#F7D4D4',
+    bgColor: '#FAF8F8',
+    bgDarkColor: '#110D0D',
+    icon: '🎄',
+    tag: 'Velvet Crimson',
+  },
+  {
+    id: 'independence',
+    name: 'Independence & Republic Pride (राष्ट्रीय पर्व)',
+    occasion: 'Independence Day (15 Aug), Republic Day (26 Jan), Gandhi Jayanti',
+    description: 'National saffron orange, subtle Ashoka chakra indigo notes, and pure pearl tones. Dignified, patriotic, and proud.',
+    primaryColor: '#C24E00',
+    primaryDarkColor: '#F06E1B',
+    accentColor: '#FDE2CC',
+    bgColor: '#FAF8F6',
+    bgDarkColor: '#110E0C',
+    icon: '🇮🇳',
+    tag: 'National Pride',
+  },
+  {
+    id: 'monsoon',
+    name: 'Monsoon Oceanic Indigo (मानसून व मिडनाइट)',
+    occasion: 'Rainy Season, Autumn Cool, Tech & Gaming Showcases',
+    description: 'Deep oceanic indigo, serene slate rain, and twilight calm. Sleek, deeply modern tech aesthetic.',
+    primaryColor: '#2C4875',
+    primaryDarkColor: '#4B78B8',
+    accentColor: '#D7E3F3',
+    bgColor: '#F7F9FC',
+    bgDarkColor: '#0C1017',
+    icon: '🌧️',
+    tag: 'Oceanic Rain',
+  },
 ];
 
 export default function AdminPage() {
@@ -430,6 +527,51 @@ export default function AdminPage() {
     setTimeout(() => setCopiedCouponId(null), 2000);
   };
 
+  // Festive Theme State & Handlers
+  const {
+    festivalTheme,
+    isFestivalMode,
+    festivalBannerText,
+    setFestivalThemeAdmin,
+    isSyncingFestival,
+  } = useThemeStore();
+
+  const [localFestivalMode, setLocalFestivalMode] = useState(isFestivalMode);
+  const [localBannerText, setLocalBannerText] = useState(festivalBannerText || '');
+
+  useEffect(() => {
+    setLocalFestivalMode(isFestivalMode);
+    setLocalBannerText(festivalBannerText || '');
+  }, [isFestivalMode, festivalBannerText]);
+
+  const handleApplyTheme = async (themeId) => {
+    try {
+      await setFestivalThemeAdmin({
+        activeTheme: themeId,
+        isFestivalMode: localFestivalMode,
+        festivalBannerText: localBannerText,
+      });
+      const themeConfig = FESTIVAL_THEMES_CONFIG.find((t) => t.id === themeId);
+      toast.success(`Platform theme changed to "${themeConfig?.name || themeId}"!`);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to update marketplace theme');
+    }
+  };
+
+  const handleSaveFestivalSettings = async (e) => {
+    e.preventDefault();
+    try {
+      await setFestivalThemeAdmin({
+        activeTheme: festivalTheme,
+        isFestivalMode: localFestivalMode,
+        festivalBannerText: localBannerText,
+      });
+      toast.success('Festival settings updated and applied across the marketplace!');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to update festival settings');
+    }
+  };
+
   // Filtered Products
   const filteredProducts = useMemo(() => {
     return allProducts.filter((p) => {
@@ -699,6 +841,7 @@ export default function AdminPage() {
           { id: 'users', label: `Users & Roles (${totalUsersCount})`, icon: Users },
           { id: 'coupons', label: `Campaigns & Coupons (${allCoupons.length})`, icon: Percent },
           { id: 'disputes', label: `Disputes & Claims (${allDisputes.length})`, icon: ShieldCheck },
+          { id: 'themes', label: 'Festive Themes', icon: Palette },
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -1781,6 +1924,256 @@ export default function AdminPage() {
                 )}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* TAB 8: FESTIVAL & SEASONAL THEME GOVERNANCE */}
+      {/* ======================================================== */}
+      {activeTab === 'themes' && (
+        <div className="space-y-6">
+          {/* Header & Status Card */}
+          <div className="card p-5 border border-[var(--color-border)] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs font-semibold bg-[var(--color-primary-light)] text-[var(--color-primary)] border border-[var(--color-border)]">
+                  <Sparkles className="w-3.5 h-3.5 shrink-0" />
+                  Admin-Exclusive Platform Styling
+                </span>
+                {isFestivalMode && (
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[var(--color-accent)] text-[var(--color-accent-text)] border border-[var(--color-border)]">
+                    Festive Mode Live
+                  </span>
+                )}
+              </div>
+              <h2 className="text-base font-bold text-[var(--color-text)]">
+                Marketplace Festive & Seasonal Themes
+              </h2>
+              <p className="text-xs text-[var(--color-text-muted)] max-w-2xl">
+                Switch themes during Indian & international festivals (Diwali, Holi, Eid, Christmas, Independence Day, etc.). 
+                Theme changes propagate in real-time across the entire storefront for all visitors and customers.
+              </p>
+            </div>
+
+            <div className="p-3 rounded-md bg-[var(--color-bg-subtle)] border border-[var(--color-border)] text-xs text-right shrink-0">
+              <span className="text-[11px] text-[var(--color-text-muted)] block">Currently Active Theme</span>
+              <span className="font-bold text-[var(--color-primary)] text-sm flex items-center justify-end gap-1.5 mt-0.5">
+                <span>
+                  {FESTIVAL_THEMES_CONFIG.find((t) => t.id === festivalTheme)?.icon || '🌿'}
+                </span>
+                <span>
+                  {FESTIVAL_THEMES_CONFIG.find((t) => t.id === festivalTheme)?.name || 'Classic Emerald'}
+                </span>
+              </span>
+            </div>
+          </div>
+
+          {/* Festival Aura & Announcement Banner Controls */}
+          <div className="card p-5 border border-[var(--color-border)] space-y-4">
+            <div className="flex items-center justify-between border-b border-[var(--color-border)] pb-3">
+              <div>
+                <h3 className="text-sm font-bold text-[var(--color-text)] flex items-center gap-2">
+                  <Tag className="w-4 h-4 text-[var(--color-primary)] shrink-0" />
+                  Storewide Festive Announcement Ribbon
+                </h3>
+                <p className="text-xs text-[var(--color-text-muted)]">
+                  Configure the celebratory announcement bar that appears at the top of every page.
+                </p>
+              </div>
+
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={localFestivalMode}
+                  onChange={(e) => setLocalFestivalMode(e.target.checked)}
+                  className="rounded border-[var(--color-border)] text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
+                />
+                <span className="text-xs font-bold text-[var(--color-text)]">
+                  Enable Festival Mode
+                </span>
+              </label>
+            </div>
+
+            <form onSubmit={handleSaveFestivalSettings} className="space-y-3">
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-[var(--color-text)]">
+                  Festive Greeting / Sale Announcement Text
+                </label>
+                <input
+                  type="text"
+                  maxLength={250}
+                  placeholder="e.g. ✨ Shubh Deepawali Sale: Special Festive Offers & Lightning Discounts Live on Hayroo! ✨"
+                  value={localBannerText}
+                  onChange={(e) => setLocalBannerText(e.target.value)}
+                  className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-md px-3 py-2 text-xs text-[var(--color-text)] focus:outline-none focus:border-[var(--color-primary)]"
+                />
+                <div className="flex items-center justify-between text-[11px] text-[var(--color-text-muted)] pt-1">
+                  <span>Shown at the top of the storefront when Festival Mode is checked.</span>
+                  <span>{localBannerText.length}/250</span>
+                </div>
+              </div>
+
+              {/* Quick Preset Chips */}
+              <div className="space-y-1.5 pt-1">
+                <span className="text-[11px] font-semibold text-[var(--color-text-muted)]">
+                  Quick Festival Greeting Presets:
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { label: '🪔 Diwali Sale', text: '✨ Shubh Deepawali: Celebrate with exclusive festive discounts & lightning deals across Hayroo!' },
+                    { label: '🎨 Holi Special', text: '🎨 Rang Barse: Celebrate the festival of colors with vibrant seasonal collections & free delivery!' },
+                    { label: '🌙 Eid Mubarak', text: '🌙 Eid Mubarak: Blessed greetings and celebratory festive offers for you and your family!' },
+                    { label: '🎄 Christmas Joy', text: '🎄 Festive Joy: Merry Christmas and Happy New Year special deals on premium essentials!' },
+                    { label: '🇮🇳 National Pride', text: '🇮🇳 Pride of the Nation: Celebrate with special Indian-crafted collections & festive perks!' },
+                    { label: '🌧️ Monsoon Delights', text: '🌧️ Monsoon Delights: Refreshing rainy season deals & lightning delivery at your doorstep!' },
+                  ].map((preset, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setLocalBannerText(preset.text)}
+                      className="px-2.5 py-1 rounded bg-[var(--color-bg-subtle)] hover:bg-[var(--color-border-subtle)] text-[11px] font-medium border border-[var(--color-border)] text-[var(--color-text)] transition-colors"
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-2">
+                <button
+                  type="submit"
+                  disabled={isSyncingFestival}
+                  className="btn-primary btn-sm flex items-center gap-1.5"
+                >
+                  <Check className="w-3.5 h-3.5" />
+                  <span>{isSyncingFestival ? 'Saving Settings...' : 'Save Festival Banner Settings'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Curated Aesthetic Themes Grid */}
+          <div className="space-y-3">
+            <div>
+              <h3 className="text-sm font-bold text-[var(--color-text)] flex items-center gap-2">
+                <Palette className="w-4 h-4 text-[var(--color-primary)] shrink-0" />
+                Curated Minimalist & Aesthetic Color Palettes (7 Presets)
+              </h3>
+              <p className="text-xs text-[var(--color-text-muted)]">
+                Selecting a theme instantly transforms buttons, accents, badges, navigation, and checkout surfaces for both light & dark modes.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {FESTIVAL_THEMES_CONFIG.map((themeItem) => {
+                const isActive = festivalTheme === themeItem.id;
+
+                return (
+                  <div
+                    key={themeItem.id}
+                    className={`card p-5 border transition-all space-y-3.5 flex flex-col justify-between ${
+                      isActive
+                        ? 'border-[var(--color-primary)] ring-2 ring-[var(--color-ring)] shadow-sm'
+                        : 'border-[var(--color-border)] hover:border-[var(--color-text-subtle)]'
+                    }`}
+                  >
+                    <div className="space-y-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl" role="img" aria-label={themeItem.name}>
+                            {themeItem.icon}
+                          </span>
+                          <div>
+                            <h4 className="text-xs font-bold text-[var(--color-text)]">
+                              {themeItem.name}
+                            </h4>
+                            <span className="text-[10px] text-[var(--color-primary)] font-semibold block">
+                              {themeItem.tag}
+                            </span>
+                          </div>
+                        </div>
+
+                        {isActive && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-[var(--color-primary-light)] text-[var(--color-primary)] border border-[var(--color-border)] shrink-0">
+                            <CheckCircle2 className="w-3 h-3" />
+                            Active
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="text-[11px] text-[var(--color-text-muted)] line-clamp-2 leading-relaxed">
+                        {themeItem.description}
+                      </p>
+
+                      <div className="text-[10px] text-[var(--color-text-subtle)] italic">
+                        <strong>Best for:</strong> {themeItem.occasion}
+                      </div>
+                    </div>
+
+                    {/* Color Swatches Strip */}
+                    <div className="space-y-1.5 pt-1">
+                      <span className="text-[10px] font-semibold text-[var(--color-text-muted)] block uppercase tracking-wider">
+                        Color Tokens Swatch
+                      </span>
+                      <div className="flex items-center gap-1.5 p-2 rounded bg-[var(--color-bg-subtle)] border border-[var(--color-border)]">
+                        <div
+                          className="w-6 h-6 rounded border border-black/10 shadow-xs"
+                          style={{ backgroundColor: themeItem.primaryColor }}
+                          title={`Primary Light: ${themeItem.primaryColor}`}
+                        />
+                        <div
+                          className="w-6 h-6 rounded border border-black/10 shadow-xs"
+                          style={{ backgroundColor: themeItem.primaryDarkColor }}
+                          title={`Primary Dark: ${themeItem.primaryDarkColor}`}
+                        />
+                        <div
+                          className="w-6 h-6 rounded border border-black/10 shadow-xs"
+                          style={{ backgroundColor: themeItem.accentColor }}
+                          title={`Accent: ${themeItem.accentColor}`}
+                        />
+                        <div
+                          className="w-6 h-6 rounded border border-black/10 shadow-xs"
+                          style={{ backgroundColor: themeItem.bgColor }}
+                          title={`Canvas Light: ${themeItem.bgColor}`}
+                        />
+                        <div
+                          className="w-6 h-6 rounded border border-black/10 shadow-xs"
+                          style={{ backgroundColor: themeItem.bgDarkColor }}
+                          title={`Canvas Dark: ${themeItem.bgDarkColor}`}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Action Button */}
+                    <div className="pt-2 border-t border-[var(--color-border)]">
+                      <button
+                        type="button"
+                        onClick={() => handleApplyTheme(themeItem.id)}
+                        disabled={isActive || isSyncingFestival}
+                        className={`w-full btn-sm flex items-center justify-center gap-1.5 ${
+                          isActive
+                            ? 'btn-secondary text-[var(--color-primary)] opacity-80 cursor-default'
+                            : 'btn-primary'
+                        }`}
+                      >
+                        {isActive ? (
+                          <>
+                            <Check className="w-3.5 h-3.5" />
+                            <span>Currently Active</span>
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-3.5 h-3.5" />
+                            <span>Apply Site-Wide</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       )}

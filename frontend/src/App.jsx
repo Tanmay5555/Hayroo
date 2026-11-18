@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import { Toaster } from 'react-hot-toast';
 
 // Layout & Global Navigation Components
+import FestivalBanner from './components/FestivalBanner';
 import FlashSaleBanner from './components/FlashSaleBanner';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -125,6 +126,9 @@ export default function App() {
             },
           }}
         />
+
+        {/* Festival & Celebratory Announcement Banner */}
+        <FestivalBanner />
 
         {/* Announcement Header */}
         <FlashSaleBanner />

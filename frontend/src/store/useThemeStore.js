@@ -1,6 +1,10 @@
 import { create } from 'zustand';
+import apiClient from '../api/axios';
 
 const THEME_STORAGE_KEY = 'hayroo_theme';
+const FESTIVAL_STORAGE_KEY = 'hayroo_festival_theme';
+const FESTIVAL_MODE_KEY = 'hayroo_festival_mode';
+const FESTIVAL_BANNER_KEY = 'hayroo_festival_banner';
 
 const getSystemPreference = () => {
   if (typeof window === 'undefined' || !window.matchMedia) {
@@ -16,6 +20,33 @@ const getStoredPreference = () => {
     return item === 'dark' || item === 'light' ? item : null;
   } catch {
     return null;
+  }
+};
+
+const getStoredFestival = () => {
+  if (typeof window === 'undefined') return 'default';
+  try {
+    return localStorage.getItem(FESTIVAL_STORAGE_KEY) || 'default';
+  } catch {
+    return 'default';
+  }
+};
+
+const getStoredFestivalMode = () => {
+  if (typeof window === 'undefined') return false;
+  try {
+    return localStorage.getItem(FESTIVAL_MODE_KEY) === 'true';
+  } catch {
+    return false;
+  }
+};
+
+const getStoredFestivalBanner = () => {
+  if (typeof window === 'undefined') return '';
+  try {
+    return localStorage.getItem(FESTIVAL_BANNER_KEY) || '';
+  } catch {
+    return '';
   }
 };
 
@@ -40,9 +71,27 @@ const applyThemeToDOM = (theme) => {
   }
 };
 
+const applyFestivalThemeToDOM = (festivalTheme) => {
+  if (typeof document === 'undefined') return;
+  const root = document.documentElement;
+
+  if (festivalTheme && festivalTheme !== 'default') {
+    root.setAttribute('data-festival', festivalTheme);
+  } else {
+    root.removeAttribute('data-festival');
+  }
+};
+
 export const useThemeStore = create((set, get) => ({
+  // Personal User Mode (Light / Dark)
   theme: getStoredPreference() || getSystemPreference(),
   hasExplicitChoice: Boolean(getStoredPreference()),
+
+  // Site-wide Festival Theme (Admin Managed)
+  festivalTheme: getStoredFestival(),
+  isFestivalMode: getStoredFestivalMode(),
+  festivalBannerText: getStoredFestivalBanner(),
+  isSyncingFestival: false,
 
   // Toggle between light and dark modes
   toggleTheme: () => {
@@ -59,7 +108,7 @@ export const useThemeStore = create((set, get) => ({
     set({ theme: nextTheme, hasExplicitChoice: true });
   },
 
-  // Explicitly set a specific theme
+  // Explicitly set light or dark theme
   setTheme: (theme) => {
     if (theme !== 'light' && theme !== 'dark') return;
 
@@ -86,8 +135,77 @@ export const useThemeStore = create((set, get) => ({
     set({ theme: systemTheme, hasExplicitChoice: false });
   },
 
-  // Initialize theme on app mount and bind system preference listener
+  // Fetch site-wide festival theme from backend (Public)
+  fetchFestivalTheme: async () => {
+    try {
+      const res = await apiClient.get('/theme');
+      const data = res.data?.data || res.data;
+      if (data) {
+        const theme = data.activeTheme || 'default';
+        const isFestival = Boolean(data.isFestivalMode);
+        const bannerText = data.festivalBannerText || '';
+
+        applyFestivalThemeToDOM(theme);
+        try {
+          localStorage.setItem(FESTIVAL_STORAGE_KEY, theme);
+          localStorage.setItem(FESTIVAL_MODE_KEY, String(isFestival));
+          localStorage.setItem(FESTIVAL_BANNER_KEY, bannerText);
+        } catch {
+          // Ignore storage quota
+        }
+
+        set({
+          festivalTheme: theme,
+          isFestivalMode: isFestival,
+          festivalBannerText: bannerText,
+        });
+      }
+    } catch {
+      // Offline fallback: keep cached festival settings
+    }
+  },
+
+  // Update site-wide festival theme (Admin Only)
+  setFestivalThemeAdmin: async ({ activeTheme, isFestivalMode, festivalBannerText }) => {
+    set({ isSyncingFestival: true });
+    try {
+      const res = await apiClient.patch('/admin/theme', {
+        activeTheme,
+        isFestivalMode,
+        festivalBannerText,
+      });
+
+      const updated = res.data?.data || res.data;
+      const theme = updated.activeTheme || activeTheme || 'default';
+      const mode = typeof updated.isFestivalMode === 'boolean' ? updated.isFestivalMode : Boolean(isFestivalMode);
+      const banner = updated.festivalBannerText !== undefined ? updated.festivalBannerText : festivalBannerText;
+
+      applyFestivalThemeToDOM(theme);
+      try {
+        localStorage.setItem(FESTIVAL_STORAGE_KEY, theme);
+        localStorage.setItem(FESTIVAL_MODE_KEY, String(mode));
+        localStorage.setItem(FESTIVAL_BANNER_KEY, banner || '');
+      } catch {
+        // Ignore storage quota
+      }
+
+      set({
+        festivalTheme: theme,
+        isFestivalMode: mode,
+        festivalBannerText: banner || '',
+        isSyncingFestival: false,
+      });
+
+      return updated;
+    } catch (err) {
+      set({ isSyncingFestival: false });
+      throw err;
+    }
+  },
+
+  // Initialize theme on app mount and bind listeners
   initTheme: () => {
+    // 1. Light / Dark mode initialization
     const stored = getStoredPreference();
     const systemTheme = getSystemPreference();
     const activeTheme = stored || systemTheme;
@@ -95,11 +213,17 @@ export const useThemeStore = create((set, get) => ({
     applyThemeToDOM(activeTheme);
     set({ theme: activeTheme, hasExplicitChoice: Boolean(stored) });
 
-    // Listen for OS/browser theme preference changes
+    // 2. Immediate local cache application for festival theme (no layout flash)
+    const initialFestival = getStoredFestival();
+    applyFestivalThemeToDOM(initialFestival);
+
+    // 3. Asynchronously synchronize with backend for live site-wide theme
+    get().fetchFestivalTheme();
+
+    // 4. Listen for OS/browser theme preference changes
     if (typeof window !== 'undefined' && window.matchMedia) {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
       const handleSystemChange = (e) => {
-        // Only react to system changes if the user hasn't explicitly set a preference
         if (!getStoredPreference()) {
           const newSystemTheme = e.matches ? 'dark' : 'light';
           applyThemeToDOM(newSystemTheme);

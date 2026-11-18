@@ -100,6 +100,257 @@
 }
 
 /* --------------------------------------------------
+   HAYROO FESTIVAL & SEASONAL THEME TOKENS
+   Minimalist, aesthetic, human-centered luxury palettes
+   -------------------------------------------------- */
+
+/* DIWALI - Royal Festive Gold & Warm Saffron */
+[data-festival='diwali'] {
+  --color-primary: #B25E00;
+  --color-primary-hover: #964F00;
+  --color-primary-active: #7A4000;
+  --color-primary-light: #FDF4E7;
+  --color-primary-text: #FFFFFF;
+  --color-bg: #FAF8F4;
+  --color-bg-subtle: #F3EFE6;
+  --color-bg-muted: #E9E3D6;
+  --color-card: #FFFFFF;
+  --color-card-subtle: #F9F7F2;
+  --color-accent: #FDE8CB;
+  --color-accent-hover: #F8D9AE;
+  --color-accent-text: #964F00;
+  --color-border: #E8E2D5;
+  --color-border-subtle: #F0ECE2;
+  --color-border-focus: #B25E00;
+  --color-ring: rgba(178, 94, 0, 0.2);
+}
+
+.dark[data-festival='diwali'], [data-festival='diwali'].dark, [data-festival='diwali'][data-theme='dark'], [data-theme='dark'][data-festival='diwali'] {
+  --color-primary: #E58A1F;
+  --color-primary-hover: #F5A038;
+  --color-primary-active: #CC7312;
+  --color-primary-light: #2A1C08;
+  --color-primary-text: #170F03;
+  --color-bg: #110E0A;
+  --color-bg-subtle: #19140F;
+  --color-bg-muted: #221B14;
+  --color-card: #17130E;
+  --color-card-subtle: #1E1913;
+  --color-accent: #332009;
+  --color-accent-hover: #452C0D;
+  --color-accent-text: #FEDDB2;
+  --color-border: #2D241C;
+  --color-border-subtle: #241C15;
+  --color-border-focus: #E58A1F;
+  --color-ring: rgba(229, 138, 31, 0.25);
+}
+
+/* HOLI - Spring Blossom & Coral Sunset */
+[data-festival='holi'] {
+  --color-primary: #C93B62;
+  --color-primary-hover: #B02A50;
+  --color-primary-active: #911D3E;
+  --color-primary-light: #FDF0F3;
+  --color-primary-text: #FFFFFF;
+  --color-bg: #FAF7F8;
+  --color-bg-subtle: #F4ECEF;
+  --color-bg-muted: #EBDFE3;
+  --color-card: #FFFFFF;
+  --color-card-subtle: #F9F5F6;
+  --color-accent: #FAD4DE;
+  --color-accent-hover: #F5BDCC;
+  --color-accent-text: #B02A50;
+  --color-border: #E8DEE2;
+  --color-border-subtle: #F0E8EB;
+  --color-border-focus: #C93B62;
+  --color-ring: rgba(201, 59, 98, 0.2);
+}
+
+.dark[data-festival='holi'], [data-festival='holi'].dark, [data-festival='holi'][data-theme='dark'], [data-theme='dark'][data-festival='holi'] {
+  --color-primary: #E65A82;
+  --color-primary-hover: #F27397;
+  --color-primary-active: #D4426C;
+  --color-primary-light: #2B0F19;
+  --color-primary-text: #18050C;
+  --color-bg: #120D10;
+  --color-bg-subtle: #1A1317;
+  --color-bg-muted: #241A20;
+  --color-card: #181115;
+  --color-card-subtle: #20171C;
+  --color-accent: #381220;
+  --color-accent-hover: #4C192C;
+  --color-accent-text: #FDC7D5;
+  --color-border: #302127;
+  --color-border-subtle: #26191E;
+  --color-border-focus: #E65A82;
+  --color-ring: rgba(230, 90, 130, 0.25);
+}
+
+/* EID - Celestial Jade & Moonlight Teal */
+[data-festival='eid'] {
+  --color-primary: #0D6E6E;
+  --color-primary-hover: #095454;
+  --color-primary-active: #063D3D;
+  --color-primary-light: #EAF4F4;
+  --color-primary-text: #FFFFFF;
+  --color-bg: #F7FAF9;
+  --color-bg-subtle: #EDF3F1;
+  --color-bg-muted: #E2EBE8;
+  --color-card: #FFFFFF;
+  --color-card-subtle: #F5F8F7;
+  --color-accent: #CEE7E7;
+  --color-accent-hover: #B5DEDE;
+  --color-accent-text: #095454;
+  --color-border: #DEE8E6;
+  --color-border-subtle: #E8F0EE;
+  --color-border-focus: #0D6E6E;
+  --color-ring: rgba(13, 110, 110, 0.2);
+}
+
+.dark[data-festival='eid'], [data-festival='eid'].dark, [data-festival='eid'][data-theme='dark'], [data-theme='dark'][data-festival='eid'] {
+  --color-primary: #21A3A3;
+  --color-primary-hover: #32B8B8;
+  --color-primary-active: #198787;
+  --color-primary-light: #0C2828;
+  --color-primary-text: #041212;
+  --color-bg: #0C1010;
+  --color-bg-subtle: #131A1A;
+  --color-bg-muted: #1A2424;
+  --color-card: #121818;
+  --color-card-subtle: #182020;
+  --color-accent: #0F3333;
+  --color-accent-hover: #154545;
+  --color-accent-text: #BDEBEB;
+  --color-border: #223030;
+  --color-border-subtle: #192424;
+  --color-border-focus: #21A3A3;
+  --color-ring: rgba(33, 163, 163, 0.25);
+}
+
+/* CHRISTMAS & NEW YEAR - Velvet Crimson & Winter Frost */
+[data-festival='christmas'] {
+  --color-primary: #A82020;
+  --color-primary-hover: #8D1717;
+  --color-primary-active: #6E0F0F;
+  --color-primary-light: #FCEEEE;
+  --color-primary-text: #FFFFFF;
+  --color-bg: #FAF8F8;
+  --color-bg-subtle: #F4EFEF;
+  --color-bg-muted: #EBE3E3;
+  --color-card: #FFFFFF;
+  --color-card-subtle: #F9F6F6;
+  --color-accent: #F7D4D4;
+  --color-accent-hover: #F2BDBD;
+  --color-accent-text: #8D1717;
+  --color-border: #E8E0E0;
+  --color-border-subtle: #F0E8E8;
+  --color-border-focus: #A82020;
+  --color-ring: rgba(168, 32, 32, 0.2);
+}
+
+.dark[data-festival='christmas'], [data-festival='christmas'].dark, [data-festival='christmas'][data-theme='dark'], [data-theme='dark'][data-festival='christmas'] {
+  --color-primary: #E03E3E;
+  --color-primary-hover: #EC5757;
+  --color-primary-active: #C42B2B;
+  --color-primary-light: #2E1010;
+  --color-primary-text: #170404;
+  --color-bg: #110D0D;
+  --color-bg-subtle: #1A1313;
+  --color-bg-muted: #241919;
+  --color-card: #171111;
+  --color-card-subtle: #1F1717;
+  --color-accent: #3D1414;
+  --color-accent-hover: #521B1B;
+  --color-accent-text: #FDC7C7;
+  --color-border: #302121;
+  --color-border-subtle: #241818;
+  --color-border-focus: #E03E3E;
+  --color-ring: rgba(224, 62, 62, 0.25);
+}
+
+/* INDEPENDENCE & REPUBLIC - National Saffron & Chakra Indigo */
+[data-festival='independence'] {
+  --color-primary: #C24E00;
+  --color-primary-hover: #A53E00;
+  --color-primary-active: #853000;
+  --color-primary-light: #FEF3EB;
+  --color-primary-text: #FFFFFF;
+  --color-bg: #FAF8F6;
+  --color-bg-subtle: #F3EFEA;
+  --color-bg-muted: #E9E3DC;
+  --color-card: #FFFFFF;
+  --color-card-subtle: #F9F7F4;
+  --color-accent: #FDE2CC;
+  --color-accent-hover: #F9CFB0;
+  --color-accent-text: #A53E00;
+  --color-border: #E8E2D9;
+  --color-border-subtle: #F0ECE4;
+  --color-border-focus: #C24E00;
+  --color-ring: rgba(194, 78, 0, 0.2);
+}
+
+.dark[data-festival='independence'], [data-festival='independence'].dark, [data-festival='independence'][data-theme='dark'], [data-theme='dark'][data-festival='independence'] {
+  --color-primary: #F06E1B;
+  --color-primary-hover: #FA863C;
+  --color-primary-active: #D95A0B;
+  --color-primary-light: #2D1405;
+  --color-primary-text: #170801;
+  --color-bg: #110E0C;
+  --color-bg-subtle: #191411;
+  --color-bg-muted: #221B16;
+  --color-card: #181310;
+  --color-card-subtle: #1F1915;
+  --color-accent: #3B1B06;
+  --color-accent-hover: #4F2409;
+  --color-accent-text: #FED3B2;
+  --color-border: #2E241E;
+  --color-border-subtle: #241C16;
+  --color-border-focus: #F06E1B;
+  --color-ring: rgba(240, 110, 27, 0.25);
+}
+
+/* MONSOON & MIDNIGHT - Oceanic Indigo & Slate Rain */
+[data-festival='monsoon'] {
+  --color-primary: #2C4875;
+  --color-primary-hover: #20375B;
+  --color-primary-active: #172844;
+  --color-primary-light: #EFF4FA;
+  --color-primary-text: #FFFFFF;
+  --color-bg: #F7F9FC;
+  --color-bg-subtle: #EEF2F7;
+  --color-bg-muted: #E2E8F1;
+  --color-card: #FFFFFF;
+  --color-card-subtle: #F5F7FA;
+  --color-accent: #D7E3F3;
+  --color-accent-hover: #BCD1EB;
+  --color-accent-text: #20375B;
+  --color-border: #DEE4EC;
+  --color-border-subtle: #E8EEF5;
+  --color-border-focus: #2C4875;
+  --color-ring: rgba(44, 72, 117, 0.2);
+}
+
+.dark[data-festival='monsoon'], [data-festival='monsoon'].dark, [data-festival='monsoon'][data-theme='dark'], [data-theme='dark'][data-festival='monsoon'] {
+  --color-primary: #4B78B8;
+  --color-primary-hover: #608DC9;
+  --color-primary-active: #38629E;
+  --color-primary-light: #111D2D;
+  --color-primary-text: #060E18;
+  --color-bg: #0C1017;
+  --color-bg-subtle: #121822;
+  --color-bg-muted: #19212F;
+  --color-card: #111721;
+  --color-card-subtle: #171F2C;
+  --color-accent: #17273D;
+  --color-accent-hover: #1F334F;
+  --color-accent-text: #C7DBF5;
+  --color-border: #202A3B;
+  --color-border-subtle: #18202D;
+  --color-border-focus: #4B78B8;
+  --color-ring: rgba(75, 120, 184, 0.25);
+}
+
+/* --------------------------------------------------
    BASE & RESET STYLES
    -------------------------------------------------- */
 
