@@ -14,6 +14,8 @@ import couponRoutes from './couponRoutes.js';
 import adminRoutes from './adminRoutes.js';
 import chatRoutes from './chatRoutes.js';
 import { searchProducts, autocomplete } from '../controllers/productController.js';
+import { upload } from '../middleware/uploadMiddleware.js';
+import { authenticate } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -35,5 +37,18 @@ router.use('/chat', chatRoutes);
 // Direct top-level search endpoints per REST API spec
 router.get('/search/autocomplete', autocomplete);
 router.get('/search', searchProducts);
+
+// Image Upload Endpoint (Authenticated)
+router.post('/upload', authenticate, upload.single('image'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ success: false, message: 'Please upload an image file (JPEG, PNG, WebP)' });
+  }
+  const fileUrl = `/uploads/${req.file.filename}`;
+  res.status(200).json({
+    success: true,
+    message: 'Image uploaded successfully',
+    data: { url: fileUrl, filename: req.file.filename },
+  });
+});
 
 export default router;

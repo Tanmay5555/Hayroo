@@ -88,7 +88,7 @@ export const getSellerProducts = asyncHandler(async (req, res) => {
 // @route   POST /api/v1/seller/products
 export const createSellerProduct = asyncHandler(async (req, res) => {
   const profile = await getSellerProfile(req.user._id);
-  const { title, description, price, originalPrice, category, brand, hsnCode, stock, images, imageLight, dynamicAttributes } =
+  const { title, description, price, originalPrice, category, brand, hsnCode, stock, images, imageLight, dynamicAttributes, discountTag } =
     req.body;
 
   if (!title || !description || price === undefined || !category) {
@@ -111,6 +111,7 @@ export const createSellerProduct = asyncHandler(async (req, res) => {
     description: String(description).trim(),
     price: numPrice,
     originalPrice: originalPrice ? Number(originalPrice) : numPrice * 1.25,
+    discountTag: discountTag || '',
     category,
     brand: brand || profile.businessName,
     hsnCode: hsnCode || '85183000',
@@ -121,6 +122,76 @@ export const createSellerProduct = asyncHandler(async (req, res) => {
   });
 
   return sendResponse(res, 201, 'Product listed successfully', product);
+});
+
+// @desc    Update product under seller
+// @route   PUT /api/v1/seller/products/:id
+export const updateSellerProduct = asyncHandler(async (req, res) => {
+  const profile = await getSellerProfile(req.user._id);
+  const { id } = req.params;
+
+  const query = req.user.role === 'ADMIN' ? { _id: id } : { _id: id, sellerId: profile._id };
+  const product = await Product.findOne(query);
+  if (!product) {
+    return sendError(res, 404, 'Product not found or not owned by seller');
+  }
+
+  const {
+    title,
+    description,
+    price,
+    originalPrice,
+    category,
+    brand,
+    hsnCode,
+    stock,
+    imageLight,
+    images,
+    discountTag,
+  } = req.body;
+
+  if (title !== undefined) product.title = String(title).trim();
+  if (description !== undefined) product.description = String(description).trim();
+  if (price !== undefined) {
+    const numPrice = Number(price);
+    if (!Number.isFinite(numPrice) || numPrice <= 0) {
+      return sendError(res, 400, 'Price must be greater than 0');
+    }
+    product.price = numPrice;
+  }
+  if (originalPrice !== undefined) product.originalPrice = Number(originalPrice);
+  if (category !== undefined) product.category = category;
+  if (brand !== undefined) product.brand = brand;
+  if (hsnCode !== undefined) product.hsnCode = hsnCode;
+  if (stock !== undefined) {
+    const numStock = Number(stock);
+    if (!Number.isFinite(numStock) || numStock < 0) {
+      return sendError(res, 400, 'Stock cannot be negative');
+    }
+    product.stock = numStock;
+  }
+  if (imageLight !== undefined) product.imageLight = imageLight;
+  if (images !== undefined) product.images = images;
+  if (discountTag !== undefined) product.discountTag = discountTag;
+
+  await product.save();
+  return sendResponse(res, 200, 'Product updated successfully', product);
+});
+
+// @desc    Delete product under seller
+// @route   DELETE /api/v1/seller/products/:id
+export const deleteSellerProduct = asyncHandler(async (req, res) => {
+  const profile = await getSellerProfile(req.user._id);
+  const { id } = req.params;
+
+  const query = req.user.role === 'ADMIN' ? { _id: id } : { _id: id, sellerId: profile._id };
+  const product = await Product.findOne(query);
+  if (!product) {
+    return sendError(res, 404, 'Product not found or not owned by seller');
+  }
+
+  await Product.deleteOne({ _id: id });
+  return sendResponse(res, 200, 'Product removed successfully from marketplace');
 });
 
 // @desc    Get seller's sub-orders
