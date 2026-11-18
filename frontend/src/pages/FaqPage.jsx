@@ -150,9 +150,9 @@ export default function FaqPage() {
             placeholder="Search shipping, returns, payments, or warranty..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="form-input text-xs pl-9 pr-4 py-2"
+            className="form-input text-xs pl-10 pr-4 py-2"
           />
-          <Search className="w-4 h-4 text-[var(--color-text-subtle)] absolute left-3 top-2.5 pointer-events-none" aria-hidden="true" />
+          <Search className="w-4 h-4 text-[var(--color-text-subtle)] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" aria-hidden="true" />
         </div>
 
         <div className="flex flex-wrap items-center gap-1.5">

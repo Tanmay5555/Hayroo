@@ -57,9 +57,9 @@ export default function Footer() {
                   placeholder="you@domain.com"
                   value={newsletterEmail}
                   onChange={(e) => setNewsletterEmail(e.target.value)}
-                  className="form-input text-xs py-2 pl-8"
+                  className="form-input text-xs py-2 pl-9"
                 />
-                <Mail className="w-3.5 h-3.5 text-[var(--color-text-subtle)] absolute left-2.5 top-2.5" aria-hidden="true" />
+                <Mail className="w-3.5 h-3.5 text-[var(--color-text-subtle)] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" aria-hidden="true" />
               </div>
               <button
                 type="submit"

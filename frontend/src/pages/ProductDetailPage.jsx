@@ -214,7 +214,7 @@ export default function ProductDetailPage() {
           onClick={() => navigate(-1)}
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+          <ArrowLeft className="w-4 h-4 shrink-0" aria-hidden="true" />
           <span>Back to products</span>
         </button>
       </nav>
@@ -287,12 +287,12 @@ export default function ProductDetailPage() {
             >
               {couponCopied ? (
                 <>
-                  <Check className="w-3.5 h-3.5 text-[var(--color-primary)]" aria-hidden="true" />
+                  <Check className="w-3.5 h-3.5 text-[var(--color-primary)] shrink-0" aria-hidden="true" />
                   <span>Copied</span>
                 </>
               ) : (
                 <>
-                  <Copy className="w-3.5 h-3.5" aria-hidden="true" />
+                  <Copy className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
                   <span>Copy Code</span>
                 </>
               )}
@@ -317,12 +317,12 @@ export default function ProductDetailPage() {
               >
                 {linkCopied ? (
                   <>
-                    <Check className="w-3.5 h-3.5 text-[var(--color-primary)]" aria-hidden="true" />
+                    <Check className="w-3.5 h-3.5 text-[var(--color-primary)] shrink-0" aria-hidden="true" />
                     <span>Link Copied!</span>
                   </>
                 ) : (
                   <>
-                    <Share2 className="w-3.5 h-3.5" aria-hidden="true" />
+                    <Share2 className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
                     <span>Share</span>
                   </>
                 )}
@@ -461,7 +461,7 @@ export default function ProductDetailPage() {
               disabled={product.stock <= 0}
               className="btn-primary w-full sm:flex-1 py-3 text-xs flex items-center justify-center gap-2"
             >
-              <ShoppingBag className="w-4 h-4" aria-hidden="true" /> Add to Cart
+              <ShoppingBag className="w-4 h-4 shrink-0" aria-hidden="true" /> Add to Cart
             </button>
 
             <button

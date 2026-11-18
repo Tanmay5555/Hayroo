@@ -342,9 +342,9 @@ export default function ProductsPage() {
                 placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="form-input text-xs py-2 pl-8 pr-3"
+                className="form-input text-xs py-2 pl-9 pr-3"
               />
-              <Search className="w-3.5 h-3.5 text-[var(--color-text-subtle)] absolute left-2.5 top-3" aria-hidden="true" />
+              <Search className="w-3.5 h-3.5 text-[var(--color-text-subtle)] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" aria-hidden="true" />
             </div>
           </div>
 

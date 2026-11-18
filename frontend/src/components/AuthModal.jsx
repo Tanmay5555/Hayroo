@@ -183,14 +183,14 @@ export default function AuthModal() {
                     Mobile Number
                   </label>
                   <div className="relative">
-                    <Phone className="w-4 h-4 text-[var(--color-text-subtle)] absolute left-3 top-2.5 pointer-events-none" />
+                    <Phone className="w-4 h-4 text-[var(--color-text-subtle)] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <input
                       id="auth-phone-input"
                       type="tel"
                       value={phoneInput}
                       onChange={(e) => setPhoneInput(e.target.value)}
                       placeholder="+919876543210"
-                      className="form-input pl-9"
+                      className="form-input pl-10"
                     />
                   </div>
                   <p className="form-hint">
@@ -253,13 +253,13 @@ export default function AuthModal() {
             <div>
               <label htmlFor="auth-login-email" className="form-label">Email Address</label>
               <div className="relative">
-                <Mail className="w-4 h-4 text-[var(--color-text-subtle)] absolute left-3 top-2.5 pointer-events-none" />
+                <Mail className="w-4 h-4 text-[var(--color-text-subtle)] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   id="auth-login-email"
                   type="email"
                   {...loginRegister('email')}
                   placeholder="name@domain.com"
-                  className="form-input pl-9"
+                  className="form-input pl-10"
                 />
               </div>
               {loginErrors.email && <p className="form-error">{loginErrors.email.message}</p>}
@@ -268,18 +268,18 @@ export default function AuthModal() {
             <div>
               <label htmlFor="auth-login-password" className="form-label">Password</label>
               <div className="relative">
-                <Lock className="w-4 h-4 text-[var(--color-text-subtle)] absolute left-3 top-2.5 pointer-events-none" />
+                <Lock className="w-4 h-4 text-[var(--color-text-subtle)] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   id="auth-login-password"
                   type={showLoginPassword ? 'text' : 'password'}
                   {...loginRegister('password')}
                   placeholder="••••••••"
-                  className="form-input pl-9 pr-10"
+                  className="form-input pl-10 pr-10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowLoginPassword(!showLoginPassword)}
-                  className="absolute right-3 top-2.5 text-[var(--color-text-subtle)] hover:text-[var(--color-text)]"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[var(--color-text-subtle)] hover:text-[var(--color-text)] flex items-center justify-center"
                   aria-label="Toggle password visibility"
                 >
                   {showLoginPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -363,7 +363,7 @@ export default function AuthModal() {
                 <button
                   type="button"
                   onClick={() => setShowRegPassword(!showRegPassword)}
-                  className="absolute right-3 top-2.5 text-[var(--color-text-subtle)] hover:text-[var(--color-text)]"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[var(--color-text-subtle)] hover:text-[var(--color-text)] flex items-center justify-center"
                   aria-label="Toggle password visibility"
                 >
                   {showRegPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}

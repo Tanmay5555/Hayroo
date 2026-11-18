@@ -181,19 +181,19 @@ export default function Navbar() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => searchQuery.trim() && setShowSearchDropdown(true)}
-                className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-text)] placeholder-[var(--color-text-subtle)] text-[13px] rounded-md pl-9 pr-9 py-1.5 focus:outline-none focus:bg-[var(--color-card)] focus:border-[var(--color-border-focus)] focus:ring-2 focus:ring-[var(--color-ring)] transition-colors"
+                className="w-full bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-text)] placeholder-[var(--color-text-subtle)] text-[13px] rounded-md pl-10 pr-10 py-1.5 focus:outline-none focus:bg-[var(--color-card)] focus:border-[var(--color-border-focus)] focus:ring-2 focus:ring-[var(--color-ring)] transition-colors"
               />
-              <Search className="w-4 h-4 text-[var(--color-text-subtle)] absolute left-3 top-2 pointer-events-none" aria-hidden="true" />
+              <Search className="w-4 h-4 text-[var(--color-text-subtle)] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" aria-hidden="true" />
               {isSearching ? (
                 <div
-                  className="w-3.5 h-3.5 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin absolute right-3 top-2.5"
+                  className="w-3.5 h-3.5 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin absolute right-3 top-1/2 -translate-y-1/2"
                   aria-label="Loading search results"
                 />
               ) : (
                 !searchQuery && (
                   <kbd
                     aria-hidden="true"
-                    className="hidden lg:inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-mono text-[var(--color-text-subtle)] bg-[var(--color-card)] border border-[var(--color-border)] rounded absolute right-2.5 top-1.5 pointer-events-none"
+                    className="hidden lg:inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-mono text-[var(--color-text-subtle)] bg-[var(--color-card)] border border-[var(--color-border)] rounded absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none"
                   >
                     /
                   </kbd>
@@ -249,11 +249,11 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setCompareModalOpen(true)}
-                className="relative p-2 rounded-md text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-subtle)] transition-colors hidden sm:inline-flex items-center gap-1"
+                className="relative p-2 rounded-md text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-subtle)] transition-colors hidden sm:inline-flex items-center gap-1.5"
                 title="Compare Products"
                 aria-label={`Compare ${compareItems.length} products`}
               >
-                <Scale className="w-4 h-4" aria-hidden="true" />
+                <Scale className="w-4 h-4 shrink-0" aria-hidden="true" />
                 <span className="text-[11px] font-mono font-medium tabular-nums">
                   {compareItems.length}
                 </span>
@@ -263,11 +263,11 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setWishlistDrawerOpen(true)}
-              className="relative p-2 rounded-md text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-subtle)] transition-colors inline-flex items-center gap-1"
+              className="relative p-2 rounded-md text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-subtle)] transition-colors inline-flex items-center gap-1.5"
               title="Saved Wishlist"
               aria-label={`Wishlist with ${wishlistItems.length} items`}
             >
-              <Heart className="w-4 h-4" aria-hidden="true" />
+              <Heart className="w-4 h-4 shrink-0" aria-hidden="true" />
               {wishlistItems.length > 0 && (
                 <span className="text-[11px] font-mono font-medium tabular-nums text-[var(--color-primary)]">
                   {wishlistItems.length}
@@ -447,9 +447,9 @@ export default function Navbar() {
                   placeholder="Search products & categories..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="form-input pl-9"
+                  className="form-input pl-10"
                 />
-                <Search className="w-4 h-4 text-[var(--color-text-subtle)] absolute left-3 top-3 pointer-events-none" aria-hidden="true" />
+                <Search className="w-4 h-4 text-[var(--color-text-subtle)] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" aria-hidden="true" />
               </form>
 
               <nav aria-label="Mobile menu" className="space-y-5">

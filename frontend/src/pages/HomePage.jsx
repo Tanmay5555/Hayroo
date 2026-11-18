@@ -126,7 +126,7 @@ export default function HomePage() {
 
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 <Link to="/products" className="btn-primary">
-                  Browse catalog <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                  Browse catalog <ArrowRight className="w-4 h-4 shrink-0" aria-hidden="true" />
                 </Link>
 
                 <a href="#categories" className="btn-secondary">
@@ -210,7 +210,7 @@ export default function HomePage() {
             to="/products"
             className="text-xs font-medium text-[var(--color-primary)] hover:underline inline-flex items-center gap-1"
           >
-            All departments <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+            All departments <ArrowRight className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
           </Link>
         </div>
 
@@ -255,7 +255,7 @@ export default function HomePage() {
             to="/products"
             className="text-xs font-medium text-[var(--color-primary)] hover:underline inline-flex items-center gap-1"
           >
-            Explore all <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+            Explore all <ArrowRight className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
           </Link>
         </div>
 
@@ -320,7 +320,7 @@ export default function HomePage() {
             to="/products?sort=newest"
             className="text-xs font-medium text-[var(--color-primary)] hover:underline inline-flex items-center gap-1"
           >
-            View newest <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+            View newest <ArrowRight className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
           </Link>
         </div>
 

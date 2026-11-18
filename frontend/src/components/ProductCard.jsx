@@ -177,12 +177,12 @@ export default function ProductCard({ product, onQuickView, viewMode = 'grid' })
 
       {/* Content Details */}
       <div className="space-y-1.5 flex-1 flex flex-col">
-        <div className="flex items-center justify-between text-[11px] text-[var(--color-text-subtle)]">
-          <span className="font-medium truncate">{product.brand || product.category || 'Official'}</span>
+        <div className="flex items-center justify-between text-[11px] text-[var(--color-text-subtle)] gap-2 min-w-0">
+          <span className="font-medium truncate min-w-0 flex-1">{product.brand || product.category || 'Official'}</span>
           {hasValidReviews && (
             <div className="flex items-center gap-1 shrink-0">
-              <Star className="w-3 h-3 text-[var(--color-warning)] fill-current" aria-hidden="true" />
-              <span className="font-medium text-[var(--color-text-muted)] tabular-nums">{ratingValue}</span>
+              <Star className="w-3 h-3 text-[var(--color-warning)] fill-current shrink-0" aria-hidden="true" />
+              <span className="font-medium text-[var(--color-text-muted)] tabular-nums shrink-0">{ratingValue}</span>
             </div>
           )}
         </div>

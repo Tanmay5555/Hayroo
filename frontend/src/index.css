@@ -381,11 +381,33 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid var(--color-border);
   background-color: var(--color-card);
   color: var(--color-text);
-  padding: 0.5625rem 0.8125rem;
+  padding-top: 0.5625rem;
+  padding-bottom: 0.5625rem;
+  padding-left: 0.8125rem;
+  padding-right: 0.8125rem;
   font-size: 0.875rem;
   font-family: var(--font-sans);
   line-height: 1.5;
   transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+/* Guard against icon overlap: Ensure utility paddings override base input padding */
+.form-input.pl-8, [class*="form-input"].pl-8 { padding-left: 2rem !important; }
+.form-input.pl-9, [class*="form-input"].pl-9 { padding-left: 2.375rem !important; }
+.form-input.pl-10, [class*="form-input"].pl-10 { padding-left: 2.625rem !important; }
+.form-input.pr-8, [class*="form-input"].pr-8 { padding-right: 2rem !important; }
+.form-input.pr-9, [class*="form-input"].pr-9 { padding-right: 2.375rem !important; }
+.form-input.pr-10, [class*="form-input"].pr-10 { padding-right: 2.625rem !important; }
+
+/* Ensure SVGs inside interactive buttons and badges never shrink or collide with text */
+.btn svg,
+.btn-primary svg,
+.btn-secondary svg,
+.btn-accent svg,
+.btn-outline svg,
+.btn-ghost svg,
+.btn-danger svg {
+  flex-shrink: 0;
 }
 
 .form-input::placeholder,
