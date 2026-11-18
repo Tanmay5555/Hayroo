@@ -294,6 +294,8 @@ const ALLOWED_PRODUCT_UPDATE_FIELDS = [
   'dynamicAttributes',
   'variants',
   'isPublished',
+  'isFeatured',
+  'isFlashSale',
   'discountTag',
 ];
 

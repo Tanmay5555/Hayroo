@@ -103,7 +103,10 @@ export const decideSellerKyc = asyncHandler(async (req, res) => {
 // @desc    Get dispute arbitration tickets
 // @route   GET /api/v1/admin/disputes
 export const getDisputes = asyncHandler(async (req, res) => {
-  const disputes = await ReturnRequest.find().sort({ createdAt: -1 });
+  const disputes = await ReturnRequest.find()
+    .populate('userId', 'fullName email phoneNumber')
+    .populate('sellerId', 'businessName businessEmail businessPhone')
+    .sort({ createdAt: -1 });
   return sendResponse(res, 200, 'Disputes retrieved', disputes);
 });
 
@@ -151,4 +154,72 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
   await order.save();
 
   return sendResponse(res, 200, 'Order status updated successfully', order);
+});
+
+// @desc    Get all registered users (Admin)
+// @route   GET /api/v1/admin/users
+export const getAllUsers = asyncHandler(async (req, res) => {
+  const users = await User.find()
+    .select('-password -refreshToken')
+    .sort({ createdAt: -1 })
+    .limit(100);
+  return sendResponse(res, 200, 'Users retrieved successfully', users);
+});
+
+// @desc    Update user role & account status (Admin)
+// @route   PATCH /api/v1/admin/users/:id/role
+export const updateUserRole = asyncHandler(async (req, res) => {
+  const { role, isActive } = req.body;
+  const validRoles = ['CUSTOMER', 'SELLER', 'ADMIN', 'DELIVERY_PARTNER', 'SUPPORT_STAFF'];
+
+  const user = await User.findById(req.params.id);
+  if (!user) return sendError(res, 404, 'User not found');
+
+  if (role) {
+    if (!validRoles.includes(role)) {
+      return sendError(res, 400, 'Invalid role value');
+    }
+    user.role = role;
+  }
+
+  if (typeof isActive === 'boolean') {
+    user.isActive = isActive;
+  }
+
+  await user.save();
+  return sendResponse(res, 200, `User account updated successfully`, user);
+});
+
+// @desc    Get all registered sellers (Admin)
+// @route   GET /api/v1/admin/sellers
+export const getAllSellers = asyncHandler(async (req, res) => {
+  const sellers = await SellerProfile.find()
+    .populate('userId', 'fullName email phoneNumber')
+    .sort({ createdAt: -1 });
+  return sendResponse(res, 200, 'Sellers retrieved successfully', sellers);
+});
+
+// @desc    Toggle seller active/approved status
+// @route   PATCH /api/v1/admin/sellers/:id/toggle-status
+export const toggleSellerStatus = asyncHandler(async (req, res) => {
+  const seller = await SellerProfile.findById(req.params.id);
+  if (!seller) return sendError(res, 404, 'Seller not found');
+
+  seller.isApproved = !seller.isApproved;
+  await seller.save();
+  return sendResponse(res, 200, `Seller status updated to ${seller.isApproved ? 'Active' : 'Suspended'}`, seller);
+});
+
+// @desc    Resolve dispute arbitration ticket
+// @route   PATCH /api/v1/admin/disputes/:id
+export const resolveDispute = asyncHandler(async (req, res) => {
+  const { status, adminNotes } = req.body;
+  const dispute = await ReturnRequest.findById(req.params.id);
+  if (!dispute) return sendError(res, 404, 'Dispute ticket not found');
+
+  if (status) dispute.status = status;
+  if (adminNotes) dispute.adminNotes = adminNotes;
+  await dispute.save();
+
+  return sendResponse(res, 200, 'Dispute resolved successfully', dispute);
 });
