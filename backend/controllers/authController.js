@@ -236,24 +236,23 @@ export const firebaseLogin = asyncHandler(async (req, res) => {
     const decoded = await firebaseAuth.verifyIdToken(token);
     const { uid, phone_number, email } = decoded;
 
-    const userPhone = phone_number || inputPhone || `+919876${crypto.randomInt(100000, 999999)}`;
+    const actualPhone = phone_number || inputPhone;
     const userEmail = (email || inputEmail || '').toLowerCase().trim();
     const desiredRole = (targetRole || decoded.role || 'CUSTOMER').toUpperCase();
     const finalRole = SELF_REGISTRABLE_ROLES.includes(desiredRole) ? desiredRole : 'CUSTOMER';
 
-    // 2. Lookup existing user by firebaseUid, phone, or email
-    let user = await User.findOne({
-      $or: [
-        { firebaseUid: uid },
-        { phoneNumber: userPhone },
-        ...(userEmail ? [{ email: userEmail }] : []),
-      ],
-    });
+    // 2. Lookup existing user by firebaseUid, email, or actual phone
+    const searchConditions = [{ firebaseUid: uid }];
+    if (userEmail) searchConditions.push({ email: userEmail });
+    if (actualPhone) searchConditions.push({ phoneNumber: actualPhone });
+
+    let user = await User.findOne({ $or: searchConditions });
 
     if (!user) {
+      const generatedPhone = actualPhone || `+91987${Date.now().toString().slice(-7)}`;
       user = new User({
-        fullName: fullName || decoded.name || `User ${userPhone.slice(-4)}`,
-        phoneNumber: userPhone,
+        fullName: fullName || decoded.name || `User ${generatedPhone.slice(-4)}`,
+        phoneNumber: generatedPhone,
         email: userEmail,
         firebaseUid: uid,
         role: finalRole,
@@ -321,12 +320,11 @@ export const firebaseLogin = asyncHandler(async (req, res) => {
       user: userPayload,
     });
   } catch (err) {
+    console.error('❌ Firebase Login Error Details:', err);
     return sendError(
       res,
       401,
-      process.env.NODE_ENV === 'production'
-        ? 'Firebase authentication failed'
-        : `Firebase authentication failed: ${err.message}`
+      `Firebase authentication failed: ${err.message}`
     );
   }
 });

@@ -101,7 +101,7 @@ function createMockFirebase() {
     auth: {
       verifyIdToken: async (token) => {
         if (process.env.NODE_ENV === 'production') {
-          throw new Error('Firebase authentication is not configured for production');
+          throw new Error('Firebase Admin SDK is not configured in production. Please set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY in your Render environment variables.');
         }
         if (!token) throw new Error('Firebase ID token is required');
         // Support simulated tokens for tests (e.g. "mock-token-uid123" or standard test tokens)
