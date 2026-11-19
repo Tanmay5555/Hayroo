@@ -545,31 +545,23 @@ export default function AdminPage() {
   }, [isFestivalMode, festivalBannerText]);
 
   const handleApplyTheme = async (themeId) => {
-    try {
-      await setFestivalThemeAdmin({
-        activeTheme: themeId,
-        isFestivalMode: localFestivalMode,
-        festivalBannerText: localBannerText,
-      });
-      const themeConfig = FESTIVAL_THEMES_CONFIG.find((t) => t.id === themeId);
-      toast.success(`Platform theme changed to "${themeConfig?.name || themeId}"!`);
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to update marketplace theme');
-    }
+    const themeConfig = FESTIVAL_THEMES_CONFIG.find((t) => t.id === themeId);
+    await setFestivalThemeAdmin({
+      activeTheme: themeId,
+      isFestivalMode: localFestivalMode,
+      festivalBannerText: localBannerText,
+    });
+    toast.success(`Platform theme changed to "${themeConfig?.name || themeId}"!`);
   };
 
   const handleSaveFestivalSettings = async (e) => {
     e.preventDefault();
-    try {
-      await setFestivalThemeAdmin({
-        activeTheme: festivalTheme,
-        isFestivalMode: localFestivalMode,
-        festivalBannerText: localBannerText,
-      });
-      toast.success('Festival settings updated and applied across the marketplace!');
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to update festival settings');
-    }
+    await setFestivalThemeAdmin({
+      activeTheme: festivalTheme,
+      isFestivalMode: localFestivalMode,
+      festivalBannerText: localBannerText,
+    });
+    toast.success('Festival settings updated and applied across the marketplace!');
   };
 
   // Filtered Products

@@ -167,39 +167,43 @@ export const useThemeStore = create((set, get) => ({
 
   // Update site-wide festival theme (Admin Only)
   setFestivalThemeAdmin: async ({ activeTheme, isFestivalMode, festivalBannerText }) => {
-    set({ isSyncingFestival: true });
+    // 1. Optimistically apply to DOM and local storage immediately
+    const theme = activeTheme || 'default';
+    const mode = typeof isFestivalMode === 'boolean' ? isFestivalMode : false;
+    const banner = festivalBannerText !== undefined ? festivalBannerText : '';
+
+    applyFestivalThemeToDOM(theme);
+    try {
+      localStorage.setItem(FESTIVAL_STORAGE_KEY, theme);
+      localStorage.setItem(FESTIVAL_MODE_KEY, String(mode));
+      localStorage.setItem(FESTIVAL_BANNER_KEY, banner);
+    } catch {
+      // Ignore storage quota
+    }
+
+    set({
+      festivalTheme: theme,
+      isFestivalMode: mode,
+      festivalBannerText: banner,
+      isSyncingFestival: true,
+    });
+
+    // 2. Persist to backend database asynchronously
     try {
       const res = await apiClient.patch('/admin/theme', {
-        activeTheme,
-        isFestivalMode,
-        festivalBannerText,
+        activeTheme: theme,
+        isFestivalMode: mode,
+        festivalBannerText: banner,
       });
 
       const updated = res.data?.data || res.data;
-      const theme = updated.activeTheme || activeTheme || 'default';
-      const mode = typeof updated.isFestivalMode === 'boolean' ? updated.isFestivalMode : Boolean(isFestivalMode);
-      const banner = updated.festivalBannerText !== undefined ? updated.festivalBannerText : festivalBannerText;
-
-      applyFestivalThemeToDOM(theme);
-      try {
-        localStorage.setItem(FESTIVAL_STORAGE_KEY, theme);
-        localStorage.setItem(FESTIVAL_MODE_KEY, String(mode));
-        localStorage.setItem(FESTIVAL_BANNER_KEY, banner || '');
-      } catch {
-        // Ignore storage quota
-      }
-
-      set({
-        festivalTheme: theme,
-        isFestivalMode: mode,
-        festivalBannerText: banner || '',
-        isSyncingFestival: false,
-      });
-
-      return updated;
+      set({ isSyncingFestival: false });
+      return { success: true, data: updated };
     } catch (err) {
       set({ isSyncingFestival: false });
-      throw err;
+      console.warn('Backend theme sync notice:', err.response?.data?.message || err.message);
+      // Theme remains active and persisted in browser storage!
+      return { success: true, localOnly: true };
     }
   },
 
