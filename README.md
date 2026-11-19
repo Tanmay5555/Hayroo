@@ -31,6 +31,21 @@ The platform features an **Amazon & Flipkart-grade Admin Governance Console**, a
 
 ---
 
+## 🧪 Reviewer & Evaluator Demo Credentials
+
+To evaluate the full multi-persona platform experience (Customer, Seller, and Super Admin) without needing phone OTPs, use the following pre-verified demo credentials on the live site:
+
+| Persona / Role | Demo Email | Demo Password | Direct Portal | Key Features to Test |
+| :--- | :--- | :--- | :--- | :--- |
+| **🛡️ Super Administrator** | `admin@apexbazaar.com` | `admin123` | **[/admin](https://hayroo-mocha.vercel.app/admin)** | Executive GMV KPIs, 7 Festive Themes Engine, Master Catalog, Order fulfillment updates, Seller KYC queue, Promo coupons, Dispute arbitration. |
+| **🏪 Verified Merchant / Seller** | `seller.tech@apexbazaar.com` | `seller123` | **[/seller](https://hayroo-mocha.vercel.app/seller)** | Store inventory, Add/Edit SKU with live image file upload (`/api/v1/upload`), low-stock alerts, financial escrow ledger. |
+| **🛒 Shopper / Customer** | `rohan@gmail.com` | `password123` | **[/](https://hayroo-mocha.vercel.app)** | Category browsing, multi-attribute filter, cart drawer, split checkout, wishlist, order history at `/account`. |
+
+> [!TIP]
+> **1-Click Fast Access in UI**: When visiting [https://hayroo-mocha.vercel.app](https://hayroo-mocha.vercel.app), click **"Sign In"** in the top navigation bar. The modal includes **1-Click Demo Buttons** (`Demo Admin` & `Demo Seller`) that automatically log you in and open the corresponding governance console instantly!
+
+---
+
 ## 🌟 Key Platform Modules & Latest Features
 
 ### 1. 🛡️ Flipkart & Amazon-Grade Admin Governance Central (`/admin`)

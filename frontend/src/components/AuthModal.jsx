@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { X, Lock, Mail, Phone, Eye, EyeOff } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { X, Lock, Mail, Phone, Eye, EyeOff, ShieldCheck, Store, Sparkles } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -21,6 +22,7 @@ const registerSchema = z.object({
 });
 
 export default function AuthModal() {
+  const navigate = useNavigate();
   const {
     isAuthModalOpen,
     authModalTab,
@@ -47,6 +49,7 @@ export default function AuthModal() {
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showRegPassword, setShowRegPassword] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isQuickLoading, setIsQuickLoading] = useState(false);
 
   const {
     register: loginRegister,
@@ -113,6 +116,18 @@ export default function AuthModal() {
     }
   };
 
+  const handleQuickLogin = async (email, password, redirectPath = null) => {
+    try {
+      setIsQuickLoading(true);
+      const success = await login(email, password);
+      if (success && redirectPath) {
+        navigate(redirectPath);
+      }
+    } finally {
+      setIsQuickLoading(false);
+    }
+  };
+
   if (!isAuthModalOpen) return null;
 
   return (
@@ -141,14 +156,49 @@ export default function AuthModal() {
         </button>
 
         {/* Brand Header */}
-        <div className="mb-6">
+        <div className="mb-4">
           <div className="w-8 h-8 rounded-[6px] bg-[var(--color-primary)] flex items-center justify-center text-[var(--color-primary-text)] font-bold text-sm mb-3">
             H
           </div>
           <h2 className="text-lg font-semibold text-[var(--color-text)]">Sign in to Hayroo</h2>
           <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
-            Access orders, saved addresses, and escrow tracking.
+            Access orders, saved addresses, and multi-vendor escrow tracking.
           </p>
+        </div>
+
+        {/* Quick Reviewer Demo Logins Strip */}
+        <div className="mb-4 p-3 rounded-md bg-[var(--color-bg-subtle)] border border-[var(--color-border)] space-y-2">
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="font-semibold text-[var(--color-text)] flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-[var(--color-primary)] shrink-0" />
+              Reviewer & Evaluator Fast Login
+            </span>
+            <span className="text-[10px] text-[var(--color-text-subtle)] font-medium">1-Click Access</span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <button
+              type="button"
+              onClick={() => handleQuickLogin('admin@apexbazaar.com', 'admin123', '/admin')}
+              disabled={isQuickLoading}
+              className="btn-secondary btn-sm flex items-center justify-center gap-1.5 py-1.5 text-[11px] hover:border-[var(--color-primary)] transition-colors"
+              title="Sign in as Administrator and open /admin portal"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-[var(--color-primary)] shrink-0" />
+              <span>{isQuickLoading ? 'Signing in...' : 'Demo Admin'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleQuickLogin('seller.tech@apexbazaar.com', 'seller123', '/seller')}
+              disabled={isQuickLoading}
+              className="btn-secondary btn-sm flex items-center justify-center gap-1.5 py-1.5 text-[11px] hover:border-[var(--color-primary)] transition-colors"
+              title="Sign in as Verified Seller and open /seller portal"
+            >
+              <Store className="w-3.5 h-3.5 text-[var(--color-primary)] shrink-0" />
+              <span>{isQuickLoading ? 'Signing in...' : 'Demo Seller'}</span>
+            </button>
+          </div>
         </div>
 
         {/* Tab Switcher */}
@@ -295,6 +345,22 @@ export default function AuthModal() {
             >
               {isLoginSubmitting ? 'Signing in...' : 'Sign In'}
             </button>
+
+            <div className="p-2.5 rounded bg-[var(--color-bg-subtle)] border border-[var(--color-border)] text-[11px] text-[var(--color-text-muted)] space-y-1 mt-2">
+              <span className="font-semibold text-[var(--color-text)] block">Evaluator Credentials:</span>
+              <div className="flex items-center justify-between font-mono text-[10px]">
+                <span>Admin: admin@apexbazaar.com</span>
+                <span className="text-[var(--color-primary)] font-semibold">admin123</span>
+              </div>
+              <div className="flex items-center justify-between font-mono text-[10px]">
+                <span>Seller: seller.tech@apexbazaar.com</span>
+                <span className="text-[var(--color-primary)] font-semibold">seller123</span>
+              </div>
+              <div className="flex items-center justify-between font-mono text-[10px]">
+                <span>Customer: rohan@gmail.com</span>
+                <span className="text-[var(--color-primary)] font-semibold">password123</span>
+              </div>
+            </div>
           </form>
         )}
 
